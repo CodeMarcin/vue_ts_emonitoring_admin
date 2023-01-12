@@ -16,6 +16,6 @@ module.exports = {
     node: true,
   },
   rules: {
-    "prettier/prettier": ["error", { endOfLine: "lf" }],
+    "prettier/prettier": ["error", { endOfLine: "off" }],
   },
 };
