@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watchEffect, watch, computed } from "vue";
+import { ref, watchEffect, computed } from "vue";
 import type { Finally } from "@/data/objects/ObjectsTheSiteMenu";
 
 interface Props {
