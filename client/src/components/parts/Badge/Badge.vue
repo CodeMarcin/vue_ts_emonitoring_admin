@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed } from "vue";
 
-type Type = "primary" | "secondary" | "warning" | "success" | "error";
+export type BadgeType = "primary" | "secondary" | "warning" | "success" | "error";
 
 interface Props {
-  type?: Type;
+  type?: BadgeType;
   sizeLarge?: boolean;
   border?: boolean;
 }

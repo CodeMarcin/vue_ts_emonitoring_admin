@@ -1,5 +1,9 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import TheServersStatus from "@/components/complex/TheServersStatus/TheServersStatus.vue";
+</script>
 
 <template>
-  <div>Home page</div>
+  <div class="container mx-auto flex flex-col px-2">
+    <TheServersStatus />
+  </div>
 </template>

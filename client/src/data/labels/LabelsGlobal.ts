@@ -1,5 +1,8 @@
 // GLOBAL
 export const INFO = "Informacje";
+export const ONLINE = "Online";
+export const OFFLINE = "Offline";
+export const LOADING = "Ładowanie";
 
 // CONTRACTORS
 export const CONTRACTORS = "Kontrahenci";
@@ -15,3 +18,8 @@ export const ADD_INVOICE = "Dodaj fakturę";
 export const OFFERTS = "Oferty";
 export const ALL_OFFERTS = "Wszystkie oferty";
 export const ADD_OFFERT = "Dodaj ofertę";
+
+// SERVERS
+export const NODE_SERVER = "Serwer NodeJS";
+export const DATA_BASE = "Baza danych";
+export const MAIL_SYSTEM = "Mail system";

@@ -9,7 +9,7 @@ interface Props {
   items: Finally[] | undefined;
 }
 
-const props = defineProps<Props>();
+defineProps<Props>();
 const showSubMenu = ref(false);
 
 const toggleSubMenu = () => {
@@ -38,7 +38,10 @@ const activeIconClass = computed(() => (showSubMenu.value ? "ri-arrow-up-s-line"
       leave-from-class="opacity-100 translate-y-0"
       leave-to-class="opacity-0 translate-y-4"
     >
-      <div v-if="showSubMenu" class="absolute top-full left-0 z-30 mt-1 w-56 min-w-full cursor-default rounded border border-gray-300 bg-white text-sm shadow-md transition-all">
+      <div
+        v-if="showSubMenu"
+        class="absolute top-full left-0 z-30 mt-1 w-56 min-w-full cursor-default rounded border border-gray-300 bg-white text-sm shadow-md transition-all"
+      >
         <span class="absolute top-0 left-0 -mt-1 ml-6 h-3 w-3 rotate-45 transform border bg-white" />
 
         <div class="relative z-10 flex min-w-fit flex-col rounded bg-white py-1">
