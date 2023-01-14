@@ -4,15 +4,19 @@
 
 @layer components {
   .badge {
-    @apply flex items-center w-fit gap-x-2 rounded px-2.5 py-0.5 font-medium;
+    @apply flex w-fit items-center gap-x-2 rounded px-2.5 py-0.5 font-medium;
   }
 
   .card {
     @apply flex w-fit max-w-sm flex-col gap-y-5 rounded-lg border border-gray-200 bg-white p-6 shadow-md;
   }
 
+  .panel {
+    @apply flex flex-col rounded-lg shadow-lg;
+  }
+
   .spinner {
-    @apply fill-primary-600 inline animate-spin text-gray-200
+    @apply fill-primary-600 inline animate-spin text-gray-200;
   }
 }
 
@@ -34,7 +38,7 @@
     @apply text-purple-800;
   }
 
-  .fill-primary-600{
+  .fill-primary-600 {
     @apply fill-purple-600;
   }
 
@@ -49,6 +53,10 @@
 
   .border-secondary-400 {
     @apply border-gray-400;
+  }
+
+  .text-secondary-500 {
+    @apply text-gray-500;
   }
 
   .text-secondary-800 {
