@@ -7,8 +7,24 @@
     @apply flex w-fit items-center gap-x-2 rounded px-2.5 py-0.5 font-medium;
   }
 
+  .button {
+    @apply flex items-center gap-x-2 rounded-lg border px-6 py-2 text-sm font-medium shadow-lg disabled:cursor-not-allowed;
+  }
+
   .card {
     @apply flex w-fit max-w-sm flex-col gap-y-5 rounded-lg border border-gray-200 bg-white p-6 shadow-md;
+  }
+
+  .checkbox {
+    @apply h-6 w-11 rounded-full bg-gray-200 after:absolute after:top-0.5 after:left-[2px] after:h-5 after:w-5 after:rounded-full  after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:ring-4 peer-focus:ring-blue-300;
+  }
+
+  .input {
+    @apply block w-full appearance-none  border-b-2 px-2.5 pb-2.5 pt-5 text-sm text-gray-900 focus:outline-none focus:ring-0;
+  }
+
+  .input-label {
+    @apply absolute top-4 left-2.5 z-10 origin-[0] -translate-y-4 scale-75 transform text-sm duration-300 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:-translate-y-4 peer-focus:scale-75;
   }
 
   .panel {
@@ -24,6 +40,22 @@
   /* PRIMARY */
   .bg-primary-100 {
     @apply bg-purple-100;
+  }
+
+  .bg-primary-200 {
+    @apply bg-purple-200;
+  }
+
+  .bg-primary-300 {
+    @apply bg-purple-300;
+  }
+
+  .bg-primary-400 {
+    @apply bg-purple-400;
+  }
+
+  .bg-primary-500 {
+    @apply bg-purple-500;
   }
 
   .bg-primary-700 {

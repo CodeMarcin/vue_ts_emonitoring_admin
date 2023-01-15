@@ -46,7 +46,7 @@ onMounted(() => setServersStatus());
       </template>
       <template #footer>
         <div class="flex justify-center">
-          <Badge v-if="server.status === LOADING" type="primary" border> <Spinner size="sm" />{{ server.status }} </Badge>
+          <Spinner v-if="server.status === LOADING" size="sm" />
           <Badge v-else :type="server.badgeType" border><i :class="server.icon"></i> {{ server.status }}</Badge>
         </div>
       </template>

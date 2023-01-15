@@ -32,7 +32,7 @@ export const OBJECT__SERVERS_STATUS: Server[] = [
     icon: "ri-database-2-line",
     status: LABELS.LOADING,
     badgeType: "success",
-    link: "https://reqres.in/api/users", // PLACEHOLDER
+    link: "https://reqres.in/api/users?delay=2", // PLACEHOLDER
   },
   {
     id: uuid.v4(),

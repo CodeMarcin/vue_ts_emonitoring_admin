@@ -15,6 +15,23 @@ const router = createRouter({
         },
       ],
     },
+    {
+      path: "/contractors",
+      name: "contractors",
+      component: () => import("@/layouts/default/View.vue"),
+      children: [
+        {
+          path: "all",
+          name: "ContractorsAll",
+          component: () => import(/* webpackChunkName: "contractorsall" */ "@/views/ContractorsAll.vue"),
+        },
+        {
+          path: "add",
+          name: "ContractorAdd",
+          component: () => import(/* webpackChunkName: "contractoradd" */ "@/views/ContractorAdd.vue"),
+        },
+      ],
+    },
   ],
 });
 
