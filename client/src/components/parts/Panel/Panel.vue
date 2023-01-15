@@ -1,8 +1,8 @@
 <script setup lang="ts"></script>
 <template>
   <div class="panel">
-    <div class="bg-secondary-100 flex items-center rounded-t-lg border p-5">
-      <div class="text-sm font-semibold">
+    <div class="bg-secondary-100 flex items-center rounded-t-lg border px-4 py-4">
+      <div class="text-xs font-semibold">
         <slot name="header"> </slot>
       </div>
     </div>
