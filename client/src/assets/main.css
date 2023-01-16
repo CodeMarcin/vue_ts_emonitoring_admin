@@ -66,6 +66,10 @@
     @apply border-purple-400;
   }
 
+  .text-primary-700 {
+    @apply text-purple-700;
+  }
+
   .text-primary-800 {
     @apply text-purple-800;
   }

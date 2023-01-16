@@ -34,7 +34,7 @@ export const OBJECT__SITE_MENU: Finally[] = [
         id: uuid.v4(),
         label: LABELS.INFO,
         icon: "ri-information-line",
-        path: "/contractors/info",
+        path: "/contractors",
       },
       {
         id: uuid.v4(),
