@@ -6,13 +6,14 @@ import Input from "@/components/parts/Input/Input.vue";
 import Panel from "@/components/parts/Panel/Panel.vue";
 import Button from "@/components/parts/Button/Button.vue";
 import Checkbox from "@/components/parts/Checkbox/Checkbox.vue";
+import Modal from "@/components/parts/Modal/Modal.vue";
 
 import { useValidateCreateRules } from "@/use/useValidateCreateRules";
 import { useValidateCreateState } from "@/use/useValidateCreateState";
 
 import { OBJECT__FORM_CONTRACTOR_ADD } from "@/data/objects/ObjectsFormContractorAdd";
 
-import { CHECK_ERRORS, FORMATING, ADD, RESET } from "@/data/labels/LabelsGlobal";
+import { CHECK_ERRORS, FORMATING, ADD, RESET, CONFIRM_QUESTION, YES, NO } from "@/data/labels/LabelsGlobal";
 
 export type HTMLElementEvent<T extends HTMLElement> = Event & {
   target: T;
@@ -26,22 +27,20 @@ const rules = useValidateCreateRules(inputs);
 const state = useValidateCreateState(inputs);
 
 const forceSendValue = ref(false);
+const showModal = ref(false);
 
 const handleCheckError = computed(() => async (checked: boolean) => {
   if (checked && !settings.formating) settings.formating = true;
   settings.checkErrors = !settings.checkErrors;
   await nextTick();
   forceSendValue.value = true;
-  v$.value.$validate();
 });
 
 const handleFormating = computed(() => async (checked: boolean) => {
   if (!checked && settings.checkErrors) settings.checkErrors = false;
-
   settings.formating = !settings.formating;
   await nextTick();
   forceSendValue.value = true;
-  // v$.value.$validate();
 });
 
 const handleChangeInput = (value: string, name: string) => {
@@ -50,14 +49,19 @@ const handleChangeInput = (value: string, name: string) => {
 
 const v$ = useVuelidate(rules, state);
 
+const toggleModal = () => {
+  showModal.value = !showModal.value;
+};
+
 const resetForm = () => {
   Object.keys(state).forEach((key) => {
     state[key] = "";
   });
+  toggleModal();
 };
 
-const sendForm = () => {
-  v$.value.$validate();
+const sendForm = async () => {
+  const test = await v$.value.$validate();
 };
 </script>
 
@@ -76,12 +80,13 @@ const sendForm = () => {
                 :mask="settings.formating ? input.mask : ''"
                 :type="input.type"
                 :name="input.name"
+                :value="state[input.name]"
                 :input-mode="settings.formating ? input.inputMode : 'text'"
                 :errors="settings.checkErrors ? v$[input.name].$errors : []"
                 :validate-rules="input.validateRules"
                 :mask-token="input.maskToken"
-                :value="state[input.name]"
                 :force-send-value="forceSendValue"
+                :pending="v$[input.name].$pending"
                 @handle-change="(e, name) => handleChangeInput(e, name)"
                 @force-end="forceSendValue = false"
               />
@@ -101,8 +106,22 @@ const sendForm = () => {
       </div>
     </div>
     <div class="flex justify-between">
-      <Button :label="RESET" @click="resetForm" color="secondary" type="outline" icon="ri-refresh-line" icon-position="start" />
-      <Button :label="ADD" @click="sendForm" color="primary" type="basic" icon="ri-arrow-right-s-line" icon-position="end" />
+      <Button :label="RESET" @handle-click="toggleModal" color="secondary" type="outline" icon="ri-refresh-line" icon-position="start" />
+      <Button :label="ADD" @handle-click="sendForm" color="primary" type="basic" icon="ri-arrow-right-s-line" icon-position="end" :is-loading="v$.$pending" />
     </div>
   </div>
+
+  <Modal v-if="showModal" :close-modal-fnc="toggleModal">
+
+      <template #icon>
+        <i class="ri-question-line text-gray-400"></i>
+      </template>
+      <template #content>{{ CONFIRM_QUESTION }}</template>
+      <template #bottom>
+        <div class="flex justify-between">
+          <Button :label="NO" @handle-click="toggleModal" color="secondary" type="outline" />
+          <Button :label="YES" @handle-click="resetForm" color="primary" type="basic" />
+        </div>
+      </template>
+  </Modal>  
 </template>

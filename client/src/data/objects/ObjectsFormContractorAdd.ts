@@ -1,8 +1,7 @@
 import { uuid } from "vue-uuid";
 import type { InterfaceInput } from "@/components/parts/Input/Input.vue";
-import { required, email, minLength, helpers } from "@vuelidate/validators";
 import LABELS from "@/data/labels/LabelsTheContractorAdd";
-import { ERROR_REQUIRED, ERROR_INVALID_EMAIL, ERROR_MIN_LENGTH } from "../labels/LabelsGlobal";
+import { customValidationEmail, customValidationMinLength, customValidationRequired, customValidationIsNipExist } from "@/validations/customValidations";
 
 export interface Groups {
   id: string;
@@ -10,18 +9,6 @@ export interface Groups {
   groupName: string;
   inputs: InterfaceInput[];
 }
-
-const ovverideRequired = () => {
-  return helpers.withMessage(ERROR_REQUIRED, required);
-};
-
-const ovverideEmail = () => {
-  return helpers.withMessage(ERROR_INVALID_EMAIL, email);
-};
-
-const ovverideMinLength = (value: number, minus: number) => {
-  return helpers.withMessage(`${ERROR_MIN_LENGTH} ${value - minus}`, minLength(value));
-};
 
 export const OBJECT__FORM_CONTRACTOR_ADD = <Groups[]>[
   {
@@ -33,13 +20,13 @@ export const OBJECT__FORM_CONTRACTOR_ADD = <Groups[]>[
         id: uuid.v4(),
         label: LABELS.NAME,
         name: "name",
-        validateRules: { required: ovverideRequired() },
+        validateRules: { required: customValidationRequired() },
       },
       {
         id: uuid.v4(),
         label: LABELS.ADDRESS,
         name: "address",
-        validateRules: { required: ovverideRequired() },
+        validateRules: { required: customValidationRequired() },
       },
       {
         id: uuid.v4(),
@@ -48,8 +35,8 @@ export const OBJECT__FORM_CONTRACTOR_ADD = <Groups[]>[
         inputMode: "numeric",
         name: "zipCode",
         validateRules: {
-          required: ovverideRequired(),
-          minLength: ovverideMinLength(6, 1),
+          required: customValidationRequired(),
+          minLength: customValidationMinLength(6, 1),
         },
       },
       {
@@ -58,7 +45,7 @@ export const OBJECT__FORM_CONTRACTOR_ADD = <Groups[]>[
         name: "city",
         mask: "A",
         maskToken: "A:[A-ząćęłńóśźżĄĆĘŁŃÓŚŹŻ ]:repeated",
-        validateRules: { required: ovverideRequired() },
+        validateRules: { required: customValidationRequired() },
       },
       {
         id: uuid.v4(),
@@ -66,7 +53,7 @@ export const OBJECT__FORM_CONTRACTOR_ADD = <Groups[]>[
         inputMode: "numeric",
         mask: "###-###-##-##",
         name: "NIP",
-        validateRules: { required: ovverideRequired(), minLength: ovverideMinLength(13, 3) },
+        validateRules: { required: customValidationRequired(), minLength: customValidationMinLength(13, 3), customValidationIsNipExist },
       },
     ],
   },
@@ -80,7 +67,7 @@ export const OBJECT__FORM_CONTRACTOR_ADD = <Groups[]>[
         type: "email",
         label: LABELS.EMAIL,
         name: "email",
-        validateRules: { email: ovverideEmail() },
+        validateRules: { email: customValidationEmail() },
       },
     ],
   },
