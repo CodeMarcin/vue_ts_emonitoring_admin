@@ -5,16 +5,19 @@ export const OFFLINE = "Offline";
 export const LOADING = "Ładowanie";
 export const NAME = "Nazwa";
 export const ADDRESS = "Ulica";
-export const ZIP_CODE ="Kod pocztowy";
+export const ZIP_CODE = "Kod pocztowy";
 export const CITY = "Miasto";
 export const EMAIL = "Adres email";
 export const NIP = "NIP";
 export const BASIC = "Podstawowe";
-export const ADDITIONAL = "Dodatkowe"
+export const ADDITIONAL = "Dodatkowe";
 export const CHECK_ERRORS = "Sprawdzanie błędów";
 export const FORMATING = "Formatowanie";
 export const ADD = "Dodaj";
-export const RESET = "Resetuj"
+export const RESET = "Resetuj";
+export const CONFIRM_QUESTION = "Czy na pewno?";
+export const YES = "Tak";
+export const NO = "Nie";
 
 // MENU CONTRACTORS
 export const CONTRACTORS = "Kontrahenci";
@@ -39,4 +42,5 @@ export const MAIL_SYSTEM = "Mail system";
 // ERRORS
 export const ERROR_REQUIRED = "Pole wymagane";
 export const ERROR_INVALID_EMAIL = "Błędny adres email";
-export const ERROR_MIN_LENGTH = "Minimalna ilość znaków "
+export const ERROR_MIN_LENGTH = "Minimalna ilość znaków";
+export const ERROR_NIP_EXIST = "Podany numer NIP istnieje w bazie danych";

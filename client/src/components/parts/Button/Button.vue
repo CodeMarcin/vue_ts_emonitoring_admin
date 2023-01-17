@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from "@vue/reactivity";
+import Spinner from "../Spinner/Spinner.vue";
 
 export interface Button {
   type?: "basic" | "outline";
@@ -7,6 +8,7 @@ export interface Button {
   label: string;
   icon?: string;
   iconPosition?: "start" | "end";
+  isLoading?: boolean;
 }
 
 const props = withDefaults(defineProps<Button>(), {
@@ -25,12 +27,20 @@ const buttonClass = computed(() => {
 
   return className;
 });
+
+const emit = defineEmits(["handleClick"]);
+
+const handleClick = () => {
+  emit("handleClick");
+};
 </script>
 
 <template>
-  <button :class="[buttonClass, ' button']">
-    <i v-if="props.icon && props.iconPosition === 'start'" :class="[props.icon, 'text-lg font-semibold']"></i>
+  <button :class="[buttonClass, ' button']" @click="handleClick" :disabled="props.isLoading">
+    <Spinner v-if="props.isLoading && props.iconPosition === 'start'" />
+    <i v-if="props.icon && props.iconPosition === 'start' && !props.isLoading" :class="[props.icon, 'text-lg font-semibold']"></i>
     <span>{{ label }}</span>
-    <i v-if="props.icon && props.iconPosition === 'end'" :class="[props.icon, 'text-lg font-semibold']"></i>
+    <Spinner v-if="props.isLoading && props.iconPosition === 'end'" />
+    <i v-if="props.icon && props.iconPosition === 'end' && !props.isLoading" :class="[props.icon, 'text-lg font-semibold']"></i>
   </button>
 </template>

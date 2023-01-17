@@ -3,6 +3,7 @@ import { watchEffect, defineEmits, computed, reactive } from "vue";
 import { vMaska } from "maska";
 import type { MaskaDetail } from "maska";
 import type { ErrorObject, ValidationRuleWithoutParams, ValidationRuleWithParams } from "@vuelidate/core";
+import Spinner from "../Spinner/Spinner.vue";
 
 export type InputType = "text" | "email";
 export type InputMode = "text" | "numeric";
@@ -18,13 +19,14 @@ export interface InterfaceInput {
   name: string;
   type?: InputType;
   inputMode?: InputMode;
-  value?: string;
   label: string;
+  value?: string;
   mask?: string;
   maskToken?: string;
   errors?: ErrorObject[];
   validateRules?: ValidationRuleWithoutParams | ValidationRuleWithParams;
   forceSendValue?: boolean;
+  pending?: boolean;
 }
 
 const props = withDefaults(defineProps<InterfaceInput>(), {
@@ -57,21 +59,23 @@ watchEffect(async () => {
     <input
       :id="props.name"
       :type="props.type"
+      :value="props.value"
       :class="[inputClass, 'input peer']"
       v-maska="maskaObject"
       :data-maska="props.mask"
       :data-maska-tokens="props.maskToken"
       data-maska-eager
-      :value="value"
       :inputmode="props.inputMode"
       @change="handleChange"
       placeholder=" "
     />
+    <Spinner v-if="props.pending" class="absolute right-2 top-6" />
+
     <label :for="props.name" :class="[labelClass, 'input-label']"><sup v-if="isRequired" class="mr-1">*</sup>{{ props.label }}</label>
     <p v-if="errors?.length" class="mt-2 flex w-full flex-col items-end gap-y-2 text-red-600">
-      <span v-for="error in errors" class="flex items-center gap-x-1 text-xs font-medium" :key="error.$uid"
-        ><i class="ri-error-warning-line"></i>{{ error.$message }}</span
-      >
+      <span v-for="error in errors" class="flex items-center gap-x-1 text-xs font-medium" :key="error.$uid">
+        <i class="ri-error-warning-line"></i>{{ error.$message }}
+      </span>
     </p>
   </div>
 </template>
