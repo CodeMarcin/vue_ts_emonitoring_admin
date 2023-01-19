@@ -66,7 +66,7 @@ watchEffect(async () => {
       :data-maska-tokens="props.maskToken"
       data-maska-eager
       :inputmode="props.inputMode"
-      @change="handleChange"
+      @keyup="handleChange"
       placeholder=" "
     />
     <Spinner v-if="props.pending" class="absolute right-2 top-6" />

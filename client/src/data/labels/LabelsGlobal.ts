@@ -16,8 +16,14 @@ export const FORMATING = "Formatowanie";
 export const ADD = "Dodaj";
 export const RESET = "Resetuj";
 export const CONFIRM_QUESTION = "Czy na pewno?";
+export const CONFIRM_DELETE = "Czy na pewno chcesz usunąć "
+export const DELETE_RELATED_INVOICES = "Usuń powiązane faktury"
 export const YES = "Tak";
 export const NO = "Nie";
+export const EDIT = "Edytuj"
+export const DELETE = "Usuń"
+export const ADDRES_START = "ul."
+
 
 // MENU CONTRACTORS
 export const CONTRACTORS = "Kontrahenci";
