@@ -12,6 +12,6 @@ import TheSiteFooter from "@/components/complex/TheSiteFooter/TheSiteFooter.vue"
     <TheBreadcrumbs class="mt-14 sm:mt-0" />
     <router-view />
 
-    <TheSiteFooter />
+    <TheSiteFooter class="mt-10"/>
   </div>
 </template>

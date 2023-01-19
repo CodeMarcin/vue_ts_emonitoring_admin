@@ -33,7 +33,7 @@ export const OBJECT__FORM_CONTRACTOR_ADD = <Groups[]>[
         label: LABELS.ZIP_CODE,
         mask: "##-###",
         inputMode: "numeric",
-        name: "zipCode",
+        name: "zipcode",
         validateRules: {
           required: customValidationRequired(),
           minLength: customValidationMinLength(6, 1),
@@ -52,7 +52,7 @@ export const OBJECT__FORM_CONTRACTOR_ADD = <Groups[]>[
         label: LABELS.NIP,
         inputMode: "numeric",
         mask: "###-###-##-##",
-        name: "NIP",
+        name: "nip",
         validateRules: { required: customValidationRequired(), minLength: customValidationMinLength(13, 3), customValidationIsNipExist },
       },
     ],

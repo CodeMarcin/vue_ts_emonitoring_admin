@@ -18,6 +18,7 @@ export const customValidationIsNipExist = helpers.withMessage(
   ERROR_NIP_EXIST,
   helpers.withAsync(async (nip: string) => {
     try {
+      if(nip.length !== 13) return true;
       return !helpers.req(nip) || !(await APIFindContractorByNIP(nip, 1)).data.length;
     } catch (error) {
       console.error(error);
