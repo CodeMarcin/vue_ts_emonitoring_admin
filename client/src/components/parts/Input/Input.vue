@@ -24,7 +24,7 @@ export interface InterfaceInput {
   mask?: string;
   maskToken?: string;
   errors?: ErrorObject[];
-  validateRules?: ValidationRuleWithoutParams | ValidationRuleWithParams;
+  validateRules?: { [key: string]: ValidationRuleWithoutParams | ValidationRuleWithParams };
   forceSendValue?: boolean;
   pending?: boolean;
 }
@@ -36,7 +36,11 @@ const props = withDefaults(defineProps<InterfaceInput>(), {
 
 const maskaObject = reactive<MaskaDetail>({ completed: false, masked: "", unmasked: "" });
 
-const isRequired = computed(() => Object.keys(props.validateRules as ValidationRuleWithoutParams).some((el) => el === "required"));
+const isRequired = computed(() => {
+  if (props.validateRules)
+    return Object.keys(props.validateRules as { [key: string]: ValidationRuleWithoutParams | ValidationRuleWithParams }).some((el) => el === "required");
+  else return false;
+});
 
 const labelClass = computed(() => (props.errors?.length ? "text-red-600" : "peer-focus:text-blue-600 "));
 const inputClass = computed(() => (props.errors?.length ? "border-red-600 focus:border-red-600" : " focus:border-blue-600"));
@@ -70,7 +74,6 @@ watchEffect(async () => {
       placeholder=" "
     />
     <Spinner v-if="props.pending" class="absolute right-2 top-6" />
-
     <label :for="props.name" :class="[labelClass, 'input-label']"><sup v-if="isRequired" class="mr-1">*</sup>{{ props.label }}</label>
     <p v-if="errors?.length" class="mt-2 flex w-full flex-col items-end gap-y-2 text-red-600">
       <span v-for="error in errors" class="flex items-center gap-x-1 text-xs font-medium" :key="error.$uid">

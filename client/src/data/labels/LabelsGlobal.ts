@@ -16,14 +16,21 @@ export const FORMATING = "Formatowanie";
 export const ADD = "Dodaj";
 export const RESET = "Resetuj";
 export const CONFIRM_QUESTION = "Czy na pewno?";
-export const CONFIRM_DELETE = "Czy na pewno chcesz usunąć "
-export const DELETE_RELATED_INVOICES = "Usuń powiązane faktury"
+export const CONFIRM_DELETE = "Czy na pewno chcesz usunąć ";
+export const DELETE_RELATED_INVOICES = "Usuń powiązane faktury";
 export const YES = "Tak";
 export const NO = "Nie";
-export const EDIT = "Edytuj"
-export const DELETE = "Usuń"
-export const ADDRES_START = "ul."
-
+export const EDIT = "Edytuj";
+export const DELETE = "Usuń";
+export const ADDRES_START = "ul.";
+export const ACCOUNT_NUMBER = "Numer konta";
+export const BANK_NAME = "Nazwa banku";
+export const PHONE_NUMBER = "Numer telefonu";
+export const SITE = "Strona internetowa";
+export const ACCOUNTAT_EMAIL = "Email księgowej";
+export const LAST_INVOICE_NUMBER = "Ostatni numer faktury";
+export const LAST_YEAR_INVOICE = "Ostatni rok faktury";
+export const PLACE_OF_ISSUE = "Miejsce wystawienia";
 
 // MENU CONTRACTORS
 export const CONTRACTORS = "Kontrahenci";
@@ -39,6 +46,11 @@ export const ADD_INVOICE = "Dodaj fakturę";
 export const OFFERTS = "Oferty";
 export const ALL_OFFERTS = "Wszystkie oferty";
 export const ADD_OFFERT = "Dodaj ofertę";
+
+// MENU SETTINGS
+export const SETTINGS = "Ustawienia";
+export const COMPANY_SETTINGS = "Ustawienia firmy";
+export const SITE_SETTINGS = "Ustawienia strony";
 
 // SERVERS
 export const NODE_SERVER = "Serwer NodeJS";
