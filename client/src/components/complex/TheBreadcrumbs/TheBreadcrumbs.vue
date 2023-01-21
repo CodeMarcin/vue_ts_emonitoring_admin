@@ -27,7 +27,6 @@ watch(
   route,
   () => {
     createBreadcrumbs();
-    console.log(breadCrumbs);
   },
   { immediate: true }
 );

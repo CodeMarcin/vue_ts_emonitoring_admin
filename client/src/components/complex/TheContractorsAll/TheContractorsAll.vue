@@ -6,7 +6,7 @@ import type { ContractorsInterfaceAPI } from "@/api/APIServer";
 import Button from "@/components/parts/Button/Button.vue";
 import Modal from "@/components/parts/Modal/Modal.vue";
 import Checkbox from "@/components/parts/Checkbox/Checkbox.vue";
-import LoaderAllContractors from "@/loaders/LoaderAllContractors.vue";
+import LoaderList from "@/loaders/LoaderList.vue";
 
 import { EDIT, DELETE, ADD_INVOICE, ADDRES_START, NIP, NO, YES, CONFIRM_DELETE, DELETE_RELATED_INVOICES } from "@/data/labels/LabelsGlobal";
 import axios from "axios";
@@ -118,5 +118,5 @@ const toggleModal = (id?: string) => {
     </template>
   </Modal>
 
-  <LoaderAllContractors v-if="deleteContractorSettings.loading" />
+  <LoaderList v-if="deleteContractorSettings.loading" />
 </template>

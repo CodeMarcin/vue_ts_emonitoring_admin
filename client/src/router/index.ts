@@ -21,7 +21,6 @@ const router = createRouter({
       path: "/contractors",
       name: "contractors",
       props: { label: LABELS.CONTRACTORS },
-
       component: () => import("@/layouts/default/View.vue"),
       children: [
         {
@@ -41,6 +40,26 @@ const router = createRouter({
           name: "ContractorAdd",
           props: { label: LABELS.ADD_CONTRACTOR },
           component: () => import(/* webpackChunkName: "contractoradd" */ "@/views/ContractorAdd.vue"),
+        },
+      ],
+    },
+    {
+      path: "/settings",
+      name: "settings",
+      props: { label: LABELS.SETTINGS },
+      component: () => import("@/layouts/default/View.vue"),
+      children: [
+        {
+          path: "company",
+          name: "companySettings",
+          props: { label: LABELS.COMPANY_SETTINGS },
+          component: () => import(/* webpackChunkName: "companysettings" */ "@/views/SettingsCompany.vue"),
+        },
+        {
+          path: "site",
+          name: "siteSettings",
+          props: { label: LABELS.COMPANY_SETTINGS },
+          component: () => import(/* webpackChunkName: "companysettings" */ "@/views/SettingsSite.vue"),
         },
       ],
     },

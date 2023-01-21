@@ -100,4 +100,23 @@ export const OBJECT__SITE_MENU: Finally[] = [
       },
     ],
   },
+  {
+    id: uuid.v4(),
+    label: LABELS.SETTINGS,
+    icon: "ri-settings-line",
+    items: [
+      {
+        id: uuid.v4(),
+        label: LABELS.SITE_SETTINGS,
+        icon: "ri-equalizer-line",
+        path: "/settings/site",
+      },
+      {
+        id: uuid.v4(),
+        label: LABELS.COMPANY_SETTINGS,
+        icon: "ri-building-2-line",
+        path: "/settings/company",
+      },
+    ],
+  },
 ];

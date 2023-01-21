@@ -8,7 +8,10 @@ import {
   ADD_INVOICE,
   OFFERTS,
   ALL_OFFERTS,
-  ADD_OFFERT
+  ADD_OFFERT,
+  SETTINGS,
+  SITE_SETTINGS,
+  COMPANY_SETTINGS
 } from "./LabelsGlobal";
 
 export default {
@@ -22,4 +25,7 @@ export default {
   OFFERTS,
   ALL_OFFERTS,
   ADD_OFFERT,
+  SETTINGS,
+  SITE_SETTINGS,
+  COMPANY_SETTINGS
 } as const;
