@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 <template>
   <div class="panel">
-    <div class="bg-gray-50 flex items-center rounded-t-lg border px-4 py-4">
+    <div class="flex items-center rounded-t-lg border bg-gray-50 px-4 py-4">
       <div class="text-xs font-semibold">
         <slot name="header"> </slot>
       </div>

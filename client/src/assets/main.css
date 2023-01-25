@@ -16,7 +16,7 @@
   }
 
   .button-tooltip {
-     @apply flex items-center gap-x-2 rounded-md px-2 py-1 text-sm font-thin disabled:cursor-not-allowed;
+    @apply flex items-center gap-x-2 rounded-md px-2 py-1 text-sm font-thin disabled:cursor-not-allowed;
   }
 
   .card {
@@ -157,4 +157,23 @@
   .text-error-800 {
     @apply text-red-800;
   }
+}
+
+@font-face {
+  font-family: "EnergyRegular";
+  src: url("../assets/fonts/Energy-Regular.otf");
+}
+
+@font-face {
+  font-family: "EnergyBold";
+  src: url("../assets/fonts/Energy-Bold.otf");
+}
+
+:root {
+    --colorOne: #231f20;
+  --colorTwo: #7a7a7a;
+  --colorThree: #ec1f26;
+  --colorFour: #00ce89;
+  --colorFive: #E5E5E5;
+  --colorWhite: #fff;
 }

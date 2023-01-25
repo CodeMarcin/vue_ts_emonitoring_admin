@@ -5,8 +5,9 @@ import type { MaskaDetail } from "maska";
 import type { ErrorObject, ValidationRuleWithoutParams, ValidationRuleWithParams } from "@vuelidate/core";
 import Spinner from "../Spinner/Spinner.vue";
 
-export type InputType = "text" | "email";
+export type InputType = "text" | "email" | "date" | "number" | "password";
 export type InputMode = "text" | "numeric";
+export type InputHandleType = "keyup" | "change";
 
 // *** Need for later ***//
 // export type HTMLElementEvent<T extends HTMLElement> = Event & {
@@ -20,18 +21,21 @@ export interface InterfaceInput {
   type?: InputType;
   inputMode?: InputMode;
   label: string;
-  value?: string;
+  value?: string | number | Date;
   mask?: string;
   maskToken?: string;
   errors?: ErrorObject[];
   validateRules?: { [key: string]: ValidationRuleWithoutParams | ValidationRuleWithParams };
   forceSendValue?: boolean;
   pending?: boolean;
+  parentName?: string;
+  handleType?: InputHandleType;
 }
 
 const props = withDefaults(defineProps<InterfaceInput>(), {
   type: "text",
   inputMode: "text",
+  handleType: "keyup",
 });
 
 const maskaObject = reactive<MaskaDetail>({ completed: false, masked: "", unmasked: "" });
@@ -48,7 +52,9 @@ const inputClass = computed(() => (props.errors?.length ? "border-red-600 focus:
 const emit = defineEmits(["handleChange", "forceEnd"]);
 
 const handleChange = () => {
-  emit("handleChange", maskaObject.masked, props.name);
+
+  if (props.parentName) emit("handleChange", maskaObject.masked, props.name, props.parentName);
+  else emit("handleChange", maskaObject.masked, props.name);
 };
 
 watchEffect(async () => {
@@ -71,6 +77,7 @@ watchEffect(async () => {
       data-maska-eager
       :inputmode="props.inputMode"
       @keyup="handleChange"
+      @change="handleChange"
       placeholder=" "
     />
     <Spinner v-if="props.pending" class="absolute right-2 top-6" />

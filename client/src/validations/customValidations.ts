@@ -1,6 +1,8 @@
 import { helpers, minLength, required, email } from "@vuelidate/validators";
-import { APIFindContractorByNIP } from "@/api/APIContractors";
 import { ERROR_MIN_LENGTH, ERROR_REQUIRED, ERROR_INVALID_EMAIL, ERROR_NIP_EXIST } from "@/data/labels/LabelsGlobal";
+
+import { query, where, getDocs } from "@firebase/firestore";
+import { COLLECTION__CONTRACTORS } from "@/firebase";
 
 export const customValidationMinLength = (value: number, minus: number) => {
   return helpers.withMessage(`${ERROR_MIN_LENGTH} ${value - minus}`, minLength(value));
@@ -19,7 +21,7 @@ export const customValidationIsNipExist = helpers.withMessage(
   helpers.withAsync(async (nip: string) => {
     try {
       if (nip.length !== 13) return true;
-      return !helpers.req(nip) || !(await APIFindContractorByNIP(nip, 1)).data.length;
+      return !helpers.req(nip) || !(await getDocs(query(COLLECTION__CONTRACTORS, where("nip", "==", nip)))).size;
     } catch (error) {
       console.error(error);
     }

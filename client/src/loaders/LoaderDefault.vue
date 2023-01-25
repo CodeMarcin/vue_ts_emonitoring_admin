@@ -1,23 +1,8 @@
-<script setup lang="ts">
-import { reactive, computed, onBeforeMount } from "vue";
-
-const props = withDefaults(defineProps<{ arrLength?: number }>(), {
-  arrLength: 5,
-});
-
-const lengthArr = reactive([]);
-const paddingClass = computed(() => (index: number) => {
-  return index !== 0 ? "pt-4" : "";
-});
-
-onBeforeMount(() => {
-  lengthArr.length = props.arrLength;
-});
-</script>
+<script setup lang="ts"></script>
 
 <template>
   <div class="flex w-full justify-center">
-    <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100" overflow="visible" fill="#ba52ff">
+    <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100" overflow="visible" fill="#000000">
       <defs><circle id="inline" cx="20" cy="50" r="6"></circle></defs>
       <use xlink:href="#inline" x="0">
         <animate attributeName="opacity" values="0;1;0" dur="1s" begin="0s" repeatCount="indefinite"></animate>
