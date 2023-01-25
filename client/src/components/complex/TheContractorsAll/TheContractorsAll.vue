@@ -1,49 +1,68 @@
 <script setup lang="ts">
-import { reactive, ref } from "vue";
-import { APIGetAllContractorsBySort, APIDeleteContractorByNIP } from "@/api/APIContractors";
-import type { ContractorsInterfaceAPI } from "@/api/APIServer";
+import { reactive, ref, onBeforeMount } from "vue";
+import { doc, getDocs, deleteDoc, query, orderBy } from "@firebase/firestore";
+import type { IContractorsResponse } from "@/api/Types";
+
+import { COLLECTION__CONTRACTORS } from "@/firebase";
 
 import Button from "@/components/parts/Button/Button.vue";
 import Modal from "@/components/parts/Modal/Modal.vue";
 import Checkbox from "@/components/parts/Checkbox/Checkbox.vue";
-import LoaderList from "@/loaders/LoaderList.vue";
+import LoaderDefault from "@/loaders/LoaderDefault.vue";
 
 import { EDIT, DELETE, ADD_INVOICE, ADDRES_START, NIP, NO, YES, CONFIRM_DELETE, DELETE_RELATED_INVOICES } from "@/data/labels/LabelsGlobal";
-import axios from "axios";
 
-const contractors = reactive<ContractorsInterfaceAPI[]>((await APIGetAllContractorsBySort("createdAt", "desc", 0)).data);
+const contractors = reactive<IContractorsResponse[]>([]);
+const loading = ref<boolean>();
+const showModal = ref<boolean>(false);
+const deleteContractorId = ref<string>();
+const deleteContractorInvoices = ref<boolean>(true);
 
-const showModal = ref(false);
-const deleteContractorSettings = reactive<{ id?: string; deleteInvoices: boolean; loading: boolean }>({ deleteInvoices: true, loading: false });
-
-const handleDeleteInvoices = (checked: boolean) => {
-  deleteContractorSettings.deleteInvoices = checked;
-  console.log(deleteContractorSettings);
+const getAndSetContractors = async (clear = false) => {
+  try {
+    loading.value = true;
+    // const contractorsApiData = await getDocs(COLLECTION__CONTRACTORS);
+    const contractorsApiData = await getDocs(query(COLLECTION__CONTRACTORS, orderBy("createDate")));
+    if (clear) contractors.splice(0);
+    contractorsApiData.forEach((el) => contractors.push({ ...(el.data() as IContractorsResponse), _id: el.id }));
+  } catch (error) {
+    console.error(error);
+  } finally {
+    loading.value = false;
+  }
 };
 
 const deleteContractor = async () => {
   try {
-    deleteContractorSettings.loading = true;
-    await APIDeleteContractorByNIP(deleteContractorSettings.id!, deleteContractorSettings.deleteInvoices);
-    const data = (await APIGetAllContractorsBySort("createdAt", "desc", 0)).data;
-    contractors.splice(0);
-    data.forEach((el: ContractorsInterfaceAPI) => contractors.push(el));
-    deleteContractorSettings.loading = false;
+    //TO DO -- DELETE CONTRACTOR INVOICES
+    loading.value = true;
+    await deleteDoc(doc(COLLECTION__CONTRACTORS, deleteContractorId.value));
+    await getAndSetContractors(true);
     toggleModal();
   } catch (error) {
     console.error(error);
+  } finally {
+    loading.value = false;
   }
 };
 
+const handleChangeDeleteInvoices = (checked: boolean) => {
+  deleteContractorInvoices.value = checked;
+};
+
 const toggleModal = (id?: string) => {
-  if (id) deleteContractorSettings.id = id;
-  if (showModal.value && !deleteContractorSettings.deleteInvoices) deleteContractorSettings.deleteInvoices = true;
+  if (id) deleteContractorId.value = id;
+  if (showModal.value && !deleteContractorInvoices.value) deleteContractorInvoices.value = true;
   showModal.value = !showModal.value;
 };
+
+onBeforeMount(async () => {
+  getAndSetContractors();
+});
 </script>
 
 <template>
-  <div v-if="!deleteContractorSettings.loading" class="flex flex-col divide-y-2 border shadow-lg">
+  <div v-if="!loading" class="flex flex-col divide-y-2 border shadow-lg">
     <div v-for="contractor in contractors" :key="contractor._id" class="flex flex-col gap-y-2 p-2 md:gap-y-0">
       <div class="flex w-full items-center justify-between">
         <div class="flex w-2/3 flex-col gap-y-2 text-sm font-semibold">{{ contractor.name }}</div>
@@ -76,7 +95,6 @@ const toggleModal = (id?: string) => {
           <span>{{ contractor.address }}</span> <span>{{ contractor.zipcode }}</span> <span>{{ contractor.city }}</span>
           <span v-if="contractor.email">{{ contractor.email }}</span>
         </div>
-
         <div class="flex gap-x-1 md:pl-1">
           <span class="font-extrabold">{{ NIP }}:</span>
           <span>{{ contractor.nip }}</span>
@@ -93,30 +111,22 @@ const toggleModal = (id?: string) => {
       <div class="flex w-full flex-col gap-y-2">
         <div class="w-11/12">
           {{ CONFIRM_DELETE }}
-          <span class="font-extrabold">{{ contractors.find((el) => el._id === deleteContractorSettings.id)?.name }}</span>
+          <span class="font-extrabold">{{ contractors.find((el) => el._id === deleteContractorId)?.name }}</span>
           ?
         </div>
         <div class="flex w-full justify-between">
           {{ DELETE_RELATED_INVOICES }}
-          <Checkbox :checked="deleteContractorSettings.deleteInvoices" @handle-change="(checked: boolean) => handleDeleteInvoices(checked)" />
+          <Checkbox :checked="deleteContractorInvoices" @handle-change="(checked: boolean) => handleChangeDeleteInvoices(checked)" />
         </div>
       </div>
     </template>
     <template #bottom>
       <div class="flex justify-between">
         <Button :label="NO" outline type="basic" @handle-click="toggleModal" />
-        <Button
-          :label="YES"
-          type="basic"
-          icon-position="end"
-          :disabled="deleteContractorSettings.loading"
-          :is-loading="deleteContractorSettings.loading"
-          color="error"
-          @handle-click="deleteContractor"
-        />
+        <Button :label="YES" type="basic" icon-position="end" :disabled="loading" :is-loading="loading" color="error" @handle-click="deleteContractor" />
       </div>
     </template>
   </Modal>
 
-  <LoaderList v-if="deleteContractorSettings.loading" />
+  <LoaderDefault v-if="loading" />
 </template>

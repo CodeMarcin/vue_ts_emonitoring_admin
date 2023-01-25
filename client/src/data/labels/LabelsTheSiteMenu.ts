@@ -11,7 +11,8 @@ import {
   ADD_OFFERT,
   SETTINGS,
   SITE_SETTINGS,
-  COMPANY_SETTINGS
+  COMPANY_SETTINGS,
+  LOGOUT
 } from "./LabelsGlobal";
 
 export default {
@@ -27,5 +28,6 @@ export default {
   ADD_OFFERT,
   SETTINGS,
   SITE_SETTINGS,
-  COMPANY_SETTINGS
+  COMPANY_SETTINGS,
+  LOGOUT
 } as const;

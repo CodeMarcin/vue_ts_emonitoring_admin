@@ -1,51 +1,105 @@
 <script setup lang="ts">
-import { reactive, computed, ref, nextTick, watchEffect, watch } from "vue";
-import type { SettingsCompanyAPI, SettingsSiteAPI } from "@/api/APIServer";
+import { reactive, ref, nextTick, onBeforeMount } from "vue";
+import { doc, getDoc, setDoc } from "@firebase/firestore";
+import { useVuelidate } from "@vuelidate/core";
+
+import type { ISettingsCompanyResponse } from "@/api/Types";
+
+import { COLLECTION__SETTINGS_COMPANY } from "@/firebase";
 
 import Checkbox from "@/components/parts/Checkbox/Checkbox.vue";
 import Input from "@/components/parts/Input/Input.vue";
 import Button from "@/components/parts/Button/Button.vue";
 import Panel from "@/components/parts/Panel/Panel.vue";
 import Modal from "@/components/parts/Modal/Modal.vue";
+import LoaderInputs from "@/loaders/LoaderInputs.vue";
 
-import { getSettingsAPI } from "@/api/APISettings";
-
-import useVuelidate from "@vuelidate/core";
-
-import { OBJECT__SETTINGS_COMPANY, OBJECT__SETTINGS_SITE } from "@/data/objects/ObjectSettings";
 import { useValidateCreateRules } from "@/use/useValidateCreateRules";
 
-import { ADD, CHECK_ERRORS, COMPANY_SETTINGS, CONFIRM_QUESTION, SITE_SETTINGS, FORMATING, NO, RESET, YES } from "@/data/labels/LabelsGlobal";
+import { OBJECT__SETTINGS_COMPANY } from "@/data/objects/ObjectSettings";
 
-const companySettingsFromAPI = reactive<SettingsCompanyAPI>((await getSettingsAPI()).data.company);
+import { CHECK_ERRORS, COMPANY_SETTINGS, CONFIRM_QUESTION, SAVE, FORMATING, NO, RESET, YES } from "@/data/labels/LabelsGlobal";
+
+const initialState: ISettingsCompanyResponse = {
+  address: "",
+  city: "",
+  email: "",
+  name: "",
+  nip: "",
+  phoneNumber: "",
+  siteAddress: "",
+  zipcode: "",
+};
 
 const inputs = reactive(OBJECT__SETTINGS_COMPANY);
 
-const rules = useValidateCreateRules(inputs);
-const state = reactive<SettingsCompanyAPI>(companySettingsFromAPI);
-
-const settings = reactive({ checkErrors: true, formating: true });
+const loading = ref<boolean>(false);
+const saving = ref<boolean>(false);
+const showModal = ref<boolean>(false);
+const checkErrors = ref<boolean>(true);
+const formating = ref<boolean>(true);
 const forceSendValue = ref(false);
-const showModal = ref(false);
 
+const rules = useValidateCreateRules(inputs);
+const state = reactive<ISettingsCompanyResponse>({ ...initialState });
 const v$ = useVuelidate(rules, state);
 
-const handleCheckError = computed(() => async (checked: boolean) => {
-  if (checked && !settings.formating) settings.formating = true;
-  settings.checkErrors = !settings.checkErrors;
-  await nextTick();
-  forceSendValue.value = true;
+const checkForm = async () => {
+  if (checkErrors.value) {
+    try {
+      const validation = await v$.value.$validate();
+      if (validation) saveData();
+    } catch (error) {
+      console.error(error);
+    }
+  } else {
+    saveData();
+  }
+};
+
+const getAndSetSettings = async () => {
+  try {
+    loading.value = true;
+    const settingsApiData = (await getDoc(doc(COLLECTION__SETTINGS_COMPANY, "settings"))).data();
+    Object.assign(state, settingsApiData);
+  } catch (error) {
+    console.error(error);
+  } finally {
+    loading.value = false;
+  }
+};
+
+const saveData = async () => {
+  try {
+    saving.value = true;
+    await setDoc(doc(COLLECTION__SETTINGS_COMPANY, "settings"), state);
+  } catch (error) {
+    console.error(error);
+  } finally {
+    saving.value = false;
+  }
+};
+
+onBeforeMount(() => {
+  getAndSetSettings();
 });
 
-const handleFormating = computed(() => async (checked: boolean) => {
-  if (!checked && settings.checkErrors) settings.checkErrors = false;
-  settings.formating = !settings.formating;
+const handleCheckError = async (checked: boolean) => {
+  if (checked && !formating.value) formating.value = true;
+  checkErrors.value = !checkErrors.value;
   await nextTick();
   forceSendValue.value = true;
-});
+};
 
-const handleChangeInput = (value: string, name: string) => {
-  state[name as keyof SettingsCompanyAPI] = value;
+const handleFormating = async (checked: boolean) => {
+  if (!checked && checkErrors.value) checkErrors.value = false;
+  formating.value = !formating.value;
+  await nextTick();
+  forceSendValue.value = true;
+};
+
+const handleChangeInput = (value: string, name: keyof ISettingsCompanyResponse) => {
+  Object.assign(state, { [name]: value });
 };
 
 const toggleModal = () => {
@@ -53,20 +107,13 @@ const toggleModal = () => {
 };
 
 const resetForm = () => {
-  Object.keys(state).forEach((key) => {
-    state[key as keyof SettingsCompanyAPI] = "";
-  });
+  Object.assign(state, { ...initialState });
   toggleModal();
-};
-
-const checkForm = async () => {
-  const validation = await v$.value.$validate();
-  console.log("asdasd");
 };
 </script>
 
 <template>
-  <div class="flex w-full flex-col gap-y-5">
+  <div v-if="!loading" class="flex w-full flex-col gap-y-5">
     <Panel>
       <template #header>{{ COMPANY_SETTINGS }}</template>
       <template #content>
@@ -75,12 +122,12 @@ const checkForm = async () => {
             <Input
               :id="input.id"
               :label="input.label"
-              :mask="settings.formating ? input.mask : ''"
+              :mask="formating ? input.mask : ''"
               :type="input.type"
               :name="input.name"
-              :value="state[input.name as keyof SettingsCompanyAPI]"
-              :input-mode="settings.formating ? input.inputMode : 'text'"
-              :errors="settings.checkErrors && input.validateRules ? v$[input.name].$errors : []"
+              :value="state[input.name as keyof ISettingsCompanyResponse]"
+              :input-mode="formating ? input.inputMode : 'text'"
+              :errors="checkErrors && input.validateRules ? v$[input.name].$errors : []"
               :validate-rules="input.validateRules"
               :mask-token="input.maskToken"
               :force-send-value="forceSendValue"
@@ -95,16 +142,25 @@ const checkForm = async () => {
     <div class="flex w-full flex-col divide-y-2 rounded-md border text-xs font-medium shadow-lg">
       <div class="flex w-full items-center justify-between px-4 py-2">
         <span>{{ CHECK_ERRORS }}</span>
-        <Checkbox :checked="settings.checkErrors" @handle-change="(checked: boolean) => handleCheckError(checked)" />
+        <Checkbox :checked="checkErrors" @handle-change="(checked: boolean) => handleCheckError(checked)" />
       </div>
       <div class="flex w-full items-center justify-between px-4 py-2">
         <span>{{ FORMATING }}</span>
-        <Checkbox :checked="settings.formating" @handle-change="(checked: boolean) => handleFormating(checked)" />
+        <Checkbox :checked="formating" @handle-change="(checked: boolean) => handleFormating(checked)" />
       </div>
     </div>
     <div class="flex justify-between">
       <Button :label="RESET" outline type="basic" icon="ri-refresh-line" icon-position="start" @handle-click="toggleModal" />
-      <Button :label="ADD" color="primary" type="basic" icon="ri-arrow-right-s-line" icon-position="end" :is-loading="v$.$pending" @handle-click="checkForm" />
+      <Button
+        :label="SAVE"
+        color="primary"
+        type="basic"
+        icon="ri-save-3-line"
+        icon-position="end"
+        :disabled="v$.$pending || loading || saving"
+        :is-loading="v$.$pending || loading || saving"
+        @handle-click="checkForm"
+      />
     </div>
   </div>
 
@@ -120,4 +176,6 @@ const checkForm = async () => {
       </div>
     </template>
   </Modal>
+
+  <LoaderInputs v-if="loading" />
 </template>

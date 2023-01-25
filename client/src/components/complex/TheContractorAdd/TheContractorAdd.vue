@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { ref, nextTick, reactive, computed } from "vue";
+import { ref, nextTick, reactive } from "vue";
 import { useVuelidate } from "@vuelidate/core";
+import { addDoc } from "@firebase/firestore";
+import router from "@/router";
 
-import type { ContractorsInterfaceAPI } from "@/api/APIServer";
+import type { IContractorsResponse } from "@/api/Types";
 
-import { APIAddContractor } from "@/api/APIContractors";
+import { COLLECTION__CONTRACTORS } from "@/firebase";
 
 import Input from "@/components/parts/Input/Input.vue";
 import Panel from "@/components/parts/Panel/Panel.vue";
@@ -18,63 +20,29 @@ import { useValidateCreateState } from "@/use/useValidateCreateState";
 import { OBJECT__FORM_CONTRACTOR_ADD } from "@/data/objects/ObjectsFormContractorAdd";
 
 import { CHECK_ERRORS, FORMATING, ADD, RESET, CONFIRM_QUESTION, YES, NO } from "@/data/labels/LabelsGlobal";
-import router from "@/router";
-
-export type HTMLElementEvent<T extends HTMLElement> = Event & {
-  target: T;
-};
 
 const inputs = reactive(OBJECT__FORM_CONTRACTOR_ADD);
 
-const settings = reactive({ checkErrors: true, formating: true });
+const loading = ref<boolean>(false);
+const showModal = ref<boolean>(false);
+const checkErrors = ref<boolean>(true);
+const formating = ref<boolean>(true);
+const forceSendValue = ref(false);
 
 const rules = useValidateCreateRules(inputs);
-const state = useValidateCreateState(inputs) as ContractorsInterfaceAPI;
-
-const loading = ref(false);
-const forceSendValue = ref(false);
-const showModal = ref(false);
-
-const handleCheckError = computed(() => async (checked: boolean) => {
-  if (checked && !settings.formating) settings.formating = true;
-  settings.checkErrors = !settings.checkErrors;
-  await nextTick();
-  forceSendValue.value = true;
-});
-
-const handleFormating = computed(() => async (checked: boolean) => {
-  if (!checked && settings.checkErrors) settings.checkErrors = false;
-  settings.formating = !settings.formating;
-  await nextTick();
-  forceSendValue.value = true;
-});
-
-const handleChangeInput = (value: string, name: string) => {
-  state[name as keyof ContractorsInterfaceAPI] = value;
-};
-
+const state = useValidateCreateState(inputs) as IContractorsResponse;
 const v$ = useVuelidate(rules, state);
 
-const toggleModal = () => {
-  showModal.value = !showModal.value;
-};
-
-const resetForm = () => {
-  Object.keys(state).forEach((key) => {
-    state[key as keyof ContractorsInterfaceAPI] = "";
-  });
-  toggleModal();
-};
-
 const checkForm = async () => {
-  if (settings.checkErrors) {
+  if (checkErrors.value) {
     try {
       loading.value = true;
       const validation = await v$.value.$validate();
       if (validation) addContractor();
-      loading.value = false;
     } catch (error) {
       console.error(error);
+    } finally {
+      loading.value = false;
     }
   } else {
     addContractor();
@@ -84,12 +52,43 @@ const checkForm = async () => {
 const addContractor = async () => {
   try {
     loading.value = true;
-    const data = await APIAddContractor(state as ContractorsInterfaceAPI);
-    loading.value = false;
-    if (data) router.push({ name: "ContractorsAll" });
+    await addDoc(COLLECTION__CONTRACTORS, { ...state, createDate: new Date() });
+    router.push({ name: "ContractorsAll" });
   } catch (error) {
     console.error(error);
+  } finally {
+    loading.value = false;
   }
+};
+
+const handleCheckError = async (checked: boolean) => {
+  if (checked && formating.value) formating.value = true;
+  checkErrors.value = !checkErrors.value;
+  await nextTick();
+  forceSendValue.value = true;
+};
+
+const handleFormating = async (checked: boolean) => {
+  if (!checked && checkErrors.value) checkErrors.value = false;
+  formating.value = !formating.value;
+  await nextTick();
+  forceSendValue.value = true;
+};
+
+const handleChangeInput = (value: string, name: keyof IContractorsResponse) => {
+  state[name] = value;
+  console.log(state);
+};
+
+const toggleModal = () => {
+  showModal.value = !showModal.value;
+};
+
+const resetForm = () => {
+  Object.keys(state).forEach((key) => {
+    state[key as keyof IContractorsResponse] = "";
+  });
+  toggleModal();
 };
 </script>
 
@@ -105,12 +104,12 @@ const addContractor = async () => {
                 :id="input.id"
                 :label="input.label"
                 :group-name="group.groupName"
-                :mask="settings.formating ? input.mask : ''"
+                :mask="formating ? input.mask : ''"
                 :type="input.type"
                 :name="input.name"
-                :value="state[input.name as keyof ContractorsInterfaceAPI]"
-                :input-mode="settings.formating ? input.inputMode : 'text'"
-                :errors="settings.checkErrors ? v$[input.name].$errors : []"
+                :value="state[input.name as keyof IContractorsResponse]"
+                :input-mode="formating ? input.inputMode : 'text'"
+                :errors="checkErrors ? v$[input.name].$errors : []"
                 :validate-rules="input.validateRules"
                 :mask-token="input.maskToken"
                 :force-send-value="forceSendValue"
@@ -126,11 +125,11 @@ const addContractor = async () => {
     <div class="flex w-full flex-col divide-y-2 rounded-md border text-xs font-medium shadow-lg">
       <div class="flex w-full items-center justify-between px-4 py-2">
         <span>{{ CHECK_ERRORS }}</span>
-        <Checkbox :checked="settings.checkErrors" @handle-change="(checked: boolean) => handleCheckError(checked)" />
+        <Checkbox :checked="checkErrors" @handle-change="(checked: boolean) => handleCheckError(checked)" />
       </div>
       <div class="flex w-full items-center justify-between px-4 py-2">
         <span>{{ FORMATING }}</span>
-        <Checkbox :checked="settings.formating" @handle-change="(checked: boolean) => handleFormating(checked)" />
+        <Checkbox :checked="formating" @handle-change="(checked: boolean) => handleFormating(checked)" />
       </div>
     </div>
     <div class="flex justify-between">

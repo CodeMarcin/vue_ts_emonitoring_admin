@@ -22,6 +22,7 @@ export const YES = "Tak";
 export const NO = "Nie";
 export const EDIT = "Edytuj";
 export const DELETE = "Usuń";
+export const SAVE = "Zapisz";
 export const ADDRES_START = "ul.";
 export const ACCOUNT_NUMBER = "Numer konta";
 export const BANK_NAME = "Nazwa banku";
@@ -31,6 +32,35 @@ export const ACCOUNTAT_EMAIL = "Email księgowej";
 export const LAST_INVOICE_NUMBER = "Ostatni numer faktury";
 export const LAST_YEAR_INVOICE = "Ostatni rok faktury";
 export const PLACE_OF_ISSUE = "Miejsce wystawienia";
+export const INVOICE_NUMBER = "Numer faktury";
+export const INVOICE_YEAR = "Rok faktury";
+export const DATE_OF_ISSUE = "Data wystawienia";
+export const DAYS_OF_PAYMENT = "Dni do zapłaty";
+export const DATE_OF_PAYMENT = "Termin zapłaty";
+export const PRICE = "Cena";
+export const QUANTITY = "Ilość";
+export const STANDARD = "Miara";
+export const TOTAL_PRICE = "Wartość";
+export const TOTAL_PRICE_ALL = "Wartość razem";
+export const LOGIN = "Login";
+export const PASSWORD = "Hasło";
+export const CASH = "Gotówka";
+export const TRANSFER = "Przelew";
+export const METER = "Metr";
+export const PIECE = "Sztuka";
+export const PREVIEW = "Podgląd";
+export const SELLER = "Sprzedawca";
+export const BUYER = "Nabywca";
+export const INVOICE = "Faktura";
+export const NUMBER = "Numer";
+export const PAYMENT = "Płatność";
+export const PAYMENT_METHOD = "Metoda płatności";
+export const LP = "LP";
+export const AMOUN_DUE_IN_WORDS = "Kwota należności słownie";
+export const TOTAL = "Razem";
+export const BACK = "Wstecz";
+export const INVOICE_BOTTOM_TEXT =
+  "SPRZEDAWCA ZWOLNIONY PODMIOTOWO Z PODATKU OD TOWARÓW I USŁUG [dostawa towarów lub świadczenie usług zwolnione na podstawie art 113 ust. 1 (albo ust. 9) ustawy z dnia 11 marca 2004 r. o podatku od towarów i usług ( Dz.U. z 2016 r. poz. 710 z późn. zm. )]";
 
 // MENU CONTRACTORS
 export const CONTRACTORS = "Kontrahenci";
@@ -51,6 +81,9 @@ export const ADD_OFFERT = "Dodaj ofertę";
 export const SETTINGS = "Ustawienia";
 export const COMPANY_SETTINGS = "Ustawienia firmy";
 export const SITE_SETTINGS = "Ustawienia strony";
+
+// MENU LOGOUT
+export const LOGOUT = "Wyloguj";
 
 // SERVERS
 export const NODE_SERVER = "Serwer NodeJS";

@@ -1,5 +1,5 @@
 import type { InterfaceInput } from "@/components/parts/Input/Input.vue";
-import { customValidationEmail, customValidationMinLength, customValidationRequired, customValidationIsNipExist } from "@/validations/customValidations";
+import { customValidationEmail, customValidationMinLength, customValidationRequired } from "@/validations/customValidations";
 import { uuid } from "vue-uuid";
 import {
   ACCOUNT_NUMBER,
@@ -55,19 +55,6 @@ export const OBJECT__SETTINGS_COMPANY = <InterfaceInput[]>[
   },
   {
     id: uuid.v4(),
-    label: ACCOUNT_NUMBER,
-    name: "accountNumber",
-    validateRules: { required: customValidationRequired(), minLength: customValidationMinLength(22, 5) },
-    mask: "## ### ### ### ### ###",
-  },
-  {
-    id: uuid.v4(),
-    label: BANK_NAME,
-    name: "bankName",
-    validateRules: { required: customValidationRequired() },
-  },
-  {
-    id: uuid.v4(),
     label: EMAIL,
     type: "email",
     name: "email",
@@ -91,6 +78,7 @@ export const OBJECT__SETTINGS_SITE = <InterfaceInput[]>[
     id: uuid.v4(),
     label: LAST_INVOICE_NUMBER,
     name: "lastInvoiceNumber",
+    type: 'number',
     mask: "A",
     maskToken: "A:[0-9]:repeated",
     validateRules: { required: customValidationRequired() },
@@ -99,8 +87,22 @@ export const OBJECT__SETTINGS_SITE = <InterfaceInput[]>[
     id: uuid.v4(),
     label: LAST_YEAR_INVOICE,
     name: "lastInvoiceYear",
+    type: 'number',
     mask: "####",
     validateRules: { required: customValidationRequired(), minLength: customValidationMinLength(4, 0) },
+  },
+  {
+    id: uuid.v4(),
+    label: ACCOUNT_NUMBER,
+    name: "accountNumber",
+    validateRules: { required: customValidationRequired(), minLength: customValidationMinLength(22, 5) },
+    mask: "## ### ### ### ### ###",
+  },
+  {
+    id: uuid.v4(),
+    label: BANK_NAME,
+    name: "bankName",
+    validateRules: { required: customValidationRequired() },
   },
   {
     id: uuid.v4(),

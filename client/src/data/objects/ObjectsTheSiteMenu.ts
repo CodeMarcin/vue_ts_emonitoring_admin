@@ -117,6 +117,12 @@ export const OBJECT__SITE_MENU: Finally[] = [
         icon: "ri-building-2-line",
         path: "/settings/company",
       },
+      {
+        id: uuid.v4(),
+        label: LABELS.LOGOUT,
+        icon: "ri-login-circle-line",
+        path: "/logout",
+      },
     ],
   },
 ];

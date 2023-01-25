@@ -25,8 +25,7 @@ export interface SettingsCompanyAPI {
   nip: string;
   phoneNumber: string;
   siteAddress: string;
-  accountNumber: string;
-  bankName: string;
+  
 }
 
 export interface SettingsSiteAPI {
