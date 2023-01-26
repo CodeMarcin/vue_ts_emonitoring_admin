@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { reactive, ref, onBeforeMount } from "vue";
-import { doc, getDocs, deleteDoc, query, orderBy } from "@firebase/firestore";
+import { doc, getDocs, deleteDoc, query, orderBy, where, writeBatch } from "@firebase/firestore";
 import type { IContractorsResponse } from "@/api/Types";
 
-import { COLLECTION__CONTRACTORS } from "@/firebase";
+import { COLLECTION__CONTRACTORS, COLLECTION__INVOICES, FIREBASE_DB } from "@/firebase";
 
 import Button from "@/components/parts/Button/Button.vue";
 import Modal from "@/components/parts/Modal/Modal.vue";
@@ -13,7 +13,7 @@ import LoaderDefault from "@/loaders/LoaderDefault.vue";
 import { EDIT, DELETE, ADD_INVOICE, ADDRES_START, NIP, NO, YES, CONFIRM_DELETE, DELETE_RELATED_INVOICES } from "@/data/labels/LabelsGlobal";
 
 const contractors = reactive<IContractorsResponse[]>([]);
-const loading = ref<boolean>();
+const loading = ref<boolean>(false);
 const showModal = ref<boolean>(false);
 const deleteContractorId = ref<string>();
 const deleteContractorInvoices = ref<boolean>(true);
@@ -21,8 +21,7 @@ const deleteContractorInvoices = ref<boolean>(true);
 const getAndSetContractors = async (clear = false) => {
   try {
     loading.value = true;
-    // const contractorsApiData = await getDocs(COLLECTION__CONTRACTORS);
-    const contractorsApiData = await getDocs(query(COLLECTION__CONTRACTORS, orderBy("createDate")));
+    const contractorsApiData = await getDocs(query(COLLECTION__CONTRACTORS, orderBy("createDate", "desc")));
     if (clear) contractors.splice(0);
     contractorsApiData.forEach((el) => contractors.push({ ...(el.data() as IContractorsResponse), _id: el.id }));
   } catch (error) {
@@ -34,9 +33,17 @@ const getAndSetContractors = async (clear = false) => {
 
 const deleteContractor = async () => {
   try {
-    //TO DO -- DELETE CONTRACTOR INVOICES
     loading.value = true;
     await deleteDoc(doc(COLLECTION__CONTRACTORS, deleteContractorId.value));
+    if (deleteContractorInvoices.value) {
+      const FIREBASE_BATCH = writeBatch(FIREBASE_DB);
+      const invoicesToDelete = await getDocs(query(COLLECTION__INVOICES, where("contractor.selectedId", "==", deleteContractorId.value)));
+      invoicesToDelete.forEach((el) => {
+
+        FIREBASE_BATCH.delete(el.ref);
+      });
+      await FIREBASE_BATCH.commit();
+    }
     await getAndSetContractors(true);
     toggleModal();
   } catch (error) {
@@ -56,7 +63,7 @@ const toggleModal = (id?: string) => {
   showModal.value = !showModal.value;
 };
 
-onBeforeMount(async () => {
+onBeforeMount(() => {
   getAndSetContractors();
 });
 </script>

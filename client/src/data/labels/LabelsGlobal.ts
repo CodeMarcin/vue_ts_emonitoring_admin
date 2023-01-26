@@ -59,6 +59,15 @@ export const LP = "LP";
 export const AMOUN_DUE_IN_WORDS = "Kwota należności słownie";
 export const TOTAL = "Razem";
 export const BACK = "Wstecz";
+export const SEND = "Wyślij";
+export const DOWNLOAD = "Pobierz";
+export const CLOSE = "Zamknij";
+export const MAIL_HOST = "Mail host";
+export const MAIL_PORT = "Mail port";
+export const MAIL_LOGIN = "Mail login";
+export const MAIL_PASSWORD = "Mail hasło";
+export const ACCOUNTAT = "Księgowa";
+export const CONTRACTOR = "Kontrahent";
 export const INVOICE_BOTTOM_TEXT =
   "SPRZEDAWCA ZWOLNIONY PODMIOTOWO Z PODATKU OD TOWARÓW I USŁUG [dostawa towarów lub świadczenie usług zwolnione na podstawie art 113 ust. 1 (albo ust. 9) ustawy z dnia 11 marca 2004 r. o podatku od towarów i usług ( Dz.U. z 2016 r. poz. 710 z późn. zm. )]";
 
@@ -79,8 +88,10 @@ export const ADD_OFFERT = "Dodaj ofertę";
 
 // MENU SETTINGS
 export const SETTINGS = "Ustawienia";
+export const INVOICE_SETTINGS = "Ustawienia faktury";
 export const COMPANY_SETTINGS = "Ustawienia firmy";
 export const SITE_SETTINGS = "Ustawienia strony";
+export const PAYMENT_SETTINGS = "Ustawienia płatności";
 
 // MENU LOGOUT
 export const LOGOUT = "Wyloguj";

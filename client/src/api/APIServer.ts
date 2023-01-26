@@ -27,12 +27,16 @@ export interface SettingsCompanyAPI {
   siteAddress: string;
   
 }
-
 export interface SettingsSiteAPI {
   accountantEmail: string;
   lastInvoiceNumber: string;
   lastInvoiceYear: string;
   placeOfIssue: string;
+}
+
+export interface SettingsPaymentAPI {
+  accountNumber: string;
+  bankName: string;
 }
 
 export const APIserver = axios.create({ baseURL: "http://localhost:8000" });
