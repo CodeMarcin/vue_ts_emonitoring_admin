@@ -93,6 +93,14 @@ export interface IInvoiceFinallState {
   totalItemsValue: number;
 }
 
+interface IRules {
+  company: ValidationArgs;
+  contractor: ValidationArgs;
+  invoiceSettings: ValidationArgs;
+  items: ValidationArgs[];
+  paymentSettings: ValidationArgs;
+}
+
 const defaultItemData: IItem = {
   name: "",
   price: 1,
@@ -137,14 +145,6 @@ const initialState: IInvoiceFinallState = {
   items: [{ ...defaultItemData }],
   totalItemsValue: 1,
 };
-
-interface IRules {
-  company: ValidationArgs;
-  contractor: ValidationArgs;
-  invoiceSettings: ValidationArgs;
-  items: ValidationArgs[];
-  paymentSettings: ValidationArgs;
-}
 
 const state = reactive<IInvoiceFinallState>({ ...initialState });
 const rules = reactive<IRules>({ company: {}, contractor: {}, invoiceSettings: {}, items: [], paymentSettings: {} });
@@ -292,7 +292,7 @@ const createItemsRules = (obj: InterfaceInput[][]) => {
 };
 
 onBeforeMount(async () => {
-  const contractorsApiData = getDocs(query(COLLECTION__CONTRACTORS, orderBy("createDate")));
+  const contractorsApiData = getDocs(query(COLLECTION__CONTRACTORS, orderBy("createDate", 'desc')));
   const settingsCompanyApiData = getDoc(doc(COLLECTION__SETTINGS_COMPANY, "settings"));
   const settingsInvoiceApiData = getDoc(doc(COLLECTION__SETTINGS_INVOICE, "settings"));
   const settingsPaymentApiData = getDoc(doc(COLLECTION__SETTINGS_PAYMENT, "settings"));
@@ -516,10 +516,10 @@ watchEffect(() => {
 
   <LoaderDefault v-if="loading" />
 
-  <InvoicePreview v-if="preview" v-bind="state" />
-  <div class="flex justify-between mt-5" v-if="preview">
-    <Button :label="BACK" outline icon="ri-arrow-left-s-line" icon-position="start" type="basic" @handle-click="closePreview" />
+  <InvoicePreview v-if="preview" v-bind="state"  />
 
+  <div class="mt-5 flex justify-between" v-if="preview">
+    <Button :label="BACK" outline icon="ri-arrow-left-s-line" icon-position="start" type="basic" @handle-click="closePreview" />
     <Button :label="SAVE" type="basic" icon="ri-save-line" icon-position="end" color="error" :is-loading="saving" @handle-click="saveInvoice" />
   </div>
 </template>

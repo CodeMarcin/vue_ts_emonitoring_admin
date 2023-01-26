@@ -2,6 +2,7 @@ import type { InterfaceInput } from "@/components/parts/Input/Input.vue";
 import { customValidationMinLength, customValidationRequired, customValidationIsNipExist, customValidationEmail } from "@/validations/customValidations";
 import { uuid } from "vue-uuid";
 import {
+  ACCOUNTAT_EMAIL,
   ACCOUNT_NUMBER,
   ADDRESS,
   BANK_NAME,
@@ -12,6 +13,10 @@ import {
   EMAIL,
   INVOICE_NUMBER,
   INVOICE_YEAR,
+  MAIL_HOST,
+  MAIL_LOGIN,
+  MAIL_PASSWORD,
+  MAIL_PORT,
   NAME,
   NIP,
   PHONE_NUMBER,
@@ -167,13 +172,15 @@ export const OBJECT__INPUT_INVOICE_SETTINGS: InterfaceInput[] = [
   },
 ];
 
+export const OBJECT__INPUT_INVOICE_SETTINGS_FOR_EDIT: InterfaceInput[] = [...OBJECT__INPUT_INVOICE_SETTINGS.filter((el) => el.name !== "dateOfIssue")];
+
 export const OBJECT__INPUT_PAYMENT_SETTINGS = <InterfaceInput[]>[
   {
     id: uuid.v4(),
     label: ACCOUNT_NUMBER,
     name: "accountNumber",
-    mask: "## ### ### ### ### ###",
-    validateRules: { required: customValidationRequired(), minLength: customValidationMinLength(22, 5) },
+    mask: "## #### #### #### #### #### ####",
+    validateRules: { required: customValidationRequired(), minLength: customValidationMinLength(26, 6) },
   },
   {
     id: uuid.v4(),
@@ -192,6 +199,40 @@ export const OBJECT__INPUT_PAYMENT_SETTINGS = <InterfaceInput[]>[
   },
 ];
 
+export const OBJECT__INPUT_PAYMENT_SETTINGS_FOR_EDIT: InterfaceInput[] = [...OBJECT__INPUT_PAYMENT_SETTINGS.filter((el) => el.name !== "daysOfPayment")];
+
+export const OBJECT__INPUT_SITE_SETTINGS = <InterfaceInput[]>[
+  {
+    id: uuid.v4(),
+    label: ACCOUNTAT_EMAIL,
+    name: "accountantEmail",
+  },
+  {
+    id: uuid.v4(),
+    label: MAIL_HOST,
+    name: "mailHost",
+  },
+  {
+    id: uuid.v4(),
+    label: MAIL_PORT,
+    name: "mailPort",
+    type: "number",
+    mask: "###",
+    validateRules: { required: customValidationRequired(), minLength: customValidationMinLength(3, 0) },
+  },
+  {
+    id: uuid.v4(),
+    label: MAIL_LOGIN,
+    name: "mailUser",
+  },
+  {
+    id: uuid.v4(),
+    label: MAIL_PASSWORD,
+    name: "mailPassword",
+    type: "password",
+  },
+];
+
 export const OBJECT__INPUT_ITEM: InterfaceInput[][] = [
   [
     {
@@ -205,9 +246,9 @@ export const OBJECT__INPUT_ITEM: InterfaceInput[][] = [
       label: QUANTITY,
       name: "quantity",
       inputMode: "numeric",
-      type: "number",
+      type: "text",
       mask: "A",
-      maskToken: "A:[0-9]:repeated",
+      maskToken: "A:[0-9.]:repeated",
       validateRules: { required: customValidationRequired() },
     },
     {

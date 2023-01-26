@@ -85,15 +85,15 @@ const router = createRouter({
       children: [
         {
           path: "add",
-          name: "invoiceAdd",
+          name: "InvoiceAdd",
           props: { label: LABELS.ADD_INVOICE },
           component: () => import(/* webpackChunkName: "invoiceadd" */ "@/views/InvoiceAdd.vue"),
         },
         {
-          path: "site",
-          name: "siteSettings",
+          path: "all",
+          name: "InvoicesAll",
           props: { label: LABELS.ALL_INVOICES },
-          component: () => import(/* webpackChunkName: "companysettings" */ "@/views/SettingsSite.vue"),
+          component: () => import(/* webpackChunkName: "invoicesall" */ "@/views/InvoicesAll.vue"),
         },
       ],
     },
@@ -107,16 +107,28 @@ const router = createRouter({
       component: () => import("@/layouts/default/View.vue"),
       children: [
         {
+          path: "invoice",
+          name: "invoiceSettings",
+          props: { label: LABELS.INVOICE_SETTINGS },
+          component: () => import(/* webpackChunkName: "invoicesettings" */ "@/views/SettingsInvoice.vue"),
+        },
+        {
           path: "company",
           name: "companySettings",
           props: { label: LABELS.COMPANY_SETTINGS },
           component: () => import(/* webpackChunkName: "companysettings" */ "@/views/SettingsCompany.vue"),
         },
         {
+          path: "payment",
+          name: "paymmentSettings",
+          props: { label: LABELS.PAYMENT_SETTINGS },
+          component: () => import(/* webpackChunkName: "paymentsettings" */ "@/views/SettingsPayment.vue"),
+        },
+        {
           path: "site",
           name: "siteSettings",
-          props: { label: LABELS.COMPANY_SETTINGS },
-          component: () => import(/* webpackChunkName: "companysettings" */ "@/views/SettingsSite.vue"),
+          props: { label: LABELS.SITE_SETTINGS },
+          component: () => import(/* webpackChunkName: "sitesettings" */ "@/views/SettingsSite.vue"),
         },
       ],
     },

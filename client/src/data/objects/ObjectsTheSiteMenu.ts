@@ -75,31 +75,31 @@ export const OBJECT__SITE_MENU: Finally[] = [
       },
     ],
   },
-  {
-    id: uuid.v4(),
-    label: LABELS.OFFERTS,
-    icon: "ri-slideshow-line",
-    items: [
-      {
-        id: uuid.v4(),
-        label: LABELS.INFO,
-        icon: "ri-information-line",
-        path: "/offerts/info",
-      },
-      {
-        id: uuid.v4(),
-        label: LABELS.ALL_OFFERTS,
-        icon: "ri-stack-line",
-        path: "/offerts/all",
-      },
-      {
-        id: uuid.v4(),
-        label: LABELS.ADD_OFFERT,
-        icon: "ri-file-add-line",
-        path: "/offerts/add",
-      },
-    ],
-  },
+  // {
+  //   id: uuid.v4(),
+  //   label: LABELS.OFFERTS,
+  //   icon: "ri-slideshow-line",
+  //   items: [
+  //     {
+  //       id: uuid.v4(),
+  //       label: LABELS.INFO,
+  //       icon: "ri-information-line",
+  //       path: "/offerts/info",
+  //     },
+  //     {
+  //       id: uuid.v4(),
+  //       label: LABELS.ALL_OFFERTS,
+  //       icon: "ri-stack-line",
+  //       path: "/offerts/all",
+  //     },
+  //     {
+  //       id: uuid.v4(),
+  //       label: LABELS.ADD_OFFERT,
+  //       icon: "ri-file-add-line",
+  //       path: "/offerts/add",
+  //     },
+  //   ],
+  // },
   {
     id: uuid.v4(),
     label: LABELS.SETTINGS,
@@ -107,15 +107,27 @@ export const OBJECT__SITE_MENU: Finally[] = [
     items: [
       {
         id: uuid.v4(),
-        label: LABELS.SITE_SETTINGS,
-        icon: "ri-equalizer-line",
-        path: "/settings/site",
+        label: LABELS.INVOICE_SETTINGS,
+        icon: "ri-file-list-line",
+        path: "/settings/invoice",
+      },
+      {
+        id: uuid.v4(),
+        label: LABELS.PAYMENT_SETTINGS,
+        icon: "ri-money-dollar-circle-line",
+        path: "/settings/payment",
       },
       {
         id: uuid.v4(),
         label: LABELS.COMPANY_SETTINGS,
         icon: "ri-building-2-line",
         path: "/settings/company",
+      },
+      {
+        id: uuid.v4(),
+        label: LABELS.SITE_SETTINGS,
+        icon: "ri-equalizer-line",
+        path: "/settings/site",
       },
       {
         id: uuid.v4(),

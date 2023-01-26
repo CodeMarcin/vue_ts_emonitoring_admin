@@ -3,9 +3,9 @@ import { reactive, ref, nextTick, onBeforeMount } from "vue";
 import { doc, getDoc, setDoc } from "@firebase/firestore";
 import { useVuelidate } from "@vuelidate/core";
 
-import type { ISettingsCompanyResponse } from "@/api/Types";
+import type { SettingsPaymentAPI } from "@/api/Types";
 
-import { COLLECTION__SETTINGS_COMPANY } from "@/firebase";
+import { COLLECTION__SETTINGS_PAYMENT } from "@/firebase";
 
 import Checkbox from "@/components/parts/Checkbox/Checkbox.vue";
 import Input from "@/components/parts/Input/Input.vue";
@@ -16,22 +16,16 @@ import LoaderDefault from "@/loaders/LoaderDefault.vue";
 
 import { useValidateCreateRules } from "@/use/useValidateCreateRules";
 
-import { OBJECT__INPUT_COMPANY } from "@/data/objects/ObjectInputs";
+import { OBJECT__INPUT_PAYMENT_SETTINGS_FOR_EDIT } from "@/data/objects/ObjectInputs";
 
-import { CHECK_ERRORS, COMPANY_SETTINGS, CONFIRM_QUESTION, SAVE, FORMATING, NO, RESET, YES } from "@/data/labels/LabelsGlobal";
+import { CHECK_ERRORS, CONFIRM_QUESTION, SAVE, FORMATING, NO, RESET, YES, SITE_SETTINGS, PAYMENT_SETTINGS } from "@/data/labels/LabelsGlobal";
 
-const initialState: ISettingsCompanyResponse = {
-  address: "",
-  city: "",
-  email: "",
-  name: "",
-  nip: "",
-  phoneNumber: "",
-  siteAddress: "",
-  zipcode: "",
+const initialState: SettingsPaymentAPI = {
+  accountNumber: "",
+  bankName: "",
 };
 
-const inputs = reactive(OBJECT__INPUT_COMPANY);
+const inputs = reactive(OBJECT__INPUT_PAYMENT_SETTINGS_FOR_EDIT);
 
 const loading = ref<boolean>(false);
 const saving = ref<boolean>(false);
@@ -41,7 +35,7 @@ const formating = ref<boolean>(true);
 const forceSendValue = ref(false);
 
 const rules = useValidateCreateRules(inputs);
-const state = reactive<ISettingsCompanyResponse>({ ...initialState });
+const state = reactive<SettingsPaymentAPI>({ ...initialState });
 const v$ = useVuelidate(rules, state);
 
 const checkForm = async () => {
@@ -60,7 +54,7 @@ const checkForm = async () => {
 const getAndSetSettings = async () => {
   try {
     loading.value = true;
-    const settingsApiData = (await getDoc(doc(COLLECTION__SETTINGS_COMPANY, "settings"))).data();
+    const settingsApiData = (await getDoc(doc(COLLECTION__SETTINGS_PAYMENT, "settings"))).data();
     Object.assign(state, settingsApiData);
   } catch (error) {
     console.error(error);
@@ -72,7 +66,7 @@ const getAndSetSettings = async () => {
 const saveData = async () => {
   try {
     saving.value = true;
-    await setDoc(doc(COLLECTION__SETTINGS_COMPANY, "settings"), state);
+    await setDoc(doc(COLLECTION__SETTINGS_PAYMENT, "settings"), state);
   } catch (error) {
     console.error(error);
   } finally {
@@ -98,9 +92,9 @@ const handleFormating = async (checked: boolean) => {
   forceSendValue.value = true;
 };
 
-const handleChangeInput = (value: string, name: keyof ISettingsCompanyResponse) => {
-  const expectedValue = Number(value) || value;
-  Object.assign(state, { [name]: expectedValue });
+const handleChangeInput = (value: string | number, name: keyof SettingsPaymentAPI) => {
+
+  Object.assign(state, { [name]: value });
 };
 
 const toggleModal = () => {
@@ -116,7 +110,7 @@ const resetForm = () => {
 <template>
   <div v-if="!loading" class="flex w-full flex-col gap-y-5">
     <Panel>
-      <template #header>{{ COMPANY_SETTINGS }}</template>
+      <template #header>{{ PAYMENT_SETTINGS }}</template>
       <template #content>
         <div class="flex w-full flex-wrap gap-x-10 gap-y-4">
           <div v-for="(input, index) in inputs" :key="input.id" class="flex flex-auto sm:w-1/3">
@@ -126,7 +120,7 @@ const resetForm = () => {
               :mask="formating ? input.mask : ''"
               :type="input.type"
               :name="input.name"
-              :value="state[input.name as keyof ISettingsCompanyResponse]"
+              :value="state[input.name as keyof SettingsPaymentAPI]"
               :input-mode="formating ? input.inputMode : 'text'"
               :errors="checkErrors && input.validateRules ? v$[input.name].$errors : []"
               :validate-rules="input.validateRules"

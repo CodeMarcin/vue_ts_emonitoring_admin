@@ -3,9 +3,9 @@ import { reactive, ref, nextTick, onBeforeMount } from "vue";
 import { doc, getDoc, setDoc } from "@firebase/firestore";
 import { useVuelidate } from "@vuelidate/core";
 
-import type { ISettingsCompanyResponse } from "@/api/Types";
+import type { ISettingsInvoiceResponse } from "@/api/Types";
 
-import { COLLECTION__SETTINGS_COMPANY } from "@/firebase";
+import { COLLECTION__SETTINGS_INVOICE } from "@/firebase";
 
 import Checkbox from "@/components/parts/Checkbox/Checkbox.vue";
 import Input from "@/components/parts/Input/Input.vue";
@@ -16,22 +16,17 @@ import LoaderDefault from "@/loaders/LoaderDefault.vue";
 
 import { useValidateCreateRules } from "@/use/useValidateCreateRules";
 
-import { OBJECT__INPUT_COMPANY } from "@/data/objects/ObjectInputs";
+import { OBJECT__INPUT_INVOICE_SETTINGS_FOR_EDIT } from "@/data/objects/ObjectInputs";
 
-import { CHECK_ERRORS, COMPANY_SETTINGS, CONFIRM_QUESTION, SAVE, FORMATING, NO, RESET, YES } from "@/data/labels/LabelsGlobal";
+import { CHECK_ERRORS, CONFIRM_QUESTION, SAVE, FORMATING, NO, RESET, YES, INVOICE_SETTINGS } from "@/data/labels/LabelsGlobal";
 
-const initialState: ISettingsCompanyResponse = {
-  address: "",
-  city: "",
-  email: "",
-  name: "",
-  nip: "",
-  phoneNumber: "",
-  siteAddress: "",
-  zipcode: "",
+const initialState: ISettingsInvoiceResponse = {
+  invoiceNumber: 0,
+  invoiceYear: 0,
+  placeOfIssue: "",
 };
 
-const inputs = reactive(OBJECT__INPUT_COMPANY);
+const inputs = reactive(OBJECT__INPUT_INVOICE_SETTINGS_FOR_EDIT);
 
 const loading = ref<boolean>(false);
 const saving = ref<boolean>(false);
@@ -41,7 +36,7 @@ const formating = ref<boolean>(true);
 const forceSendValue = ref(false);
 
 const rules = useValidateCreateRules(inputs);
-const state = reactive<ISettingsCompanyResponse>({ ...initialState });
+const state = reactive<ISettingsInvoiceResponse>({ ...initialState });
 const v$ = useVuelidate(rules, state);
 
 const checkForm = async () => {
@@ -60,7 +55,7 @@ const checkForm = async () => {
 const getAndSetSettings = async () => {
   try {
     loading.value = true;
-    const settingsApiData = (await getDoc(doc(COLLECTION__SETTINGS_COMPANY, "settings"))).data();
+    const settingsApiData = (await getDoc(doc(COLLECTION__SETTINGS_INVOICE, "settings"))).data();
     Object.assign(state, settingsApiData);
   } catch (error) {
     console.error(error);
@@ -72,7 +67,7 @@ const getAndSetSettings = async () => {
 const saveData = async () => {
   try {
     saving.value = true;
-    await setDoc(doc(COLLECTION__SETTINGS_COMPANY, "settings"), state);
+    await setDoc(doc(COLLECTION__SETTINGS_INVOICE, "settings"), state);
   } catch (error) {
     console.error(error);
   } finally {
@@ -98,7 +93,7 @@ const handleFormating = async (checked: boolean) => {
   forceSendValue.value = true;
 };
 
-const handleChangeInput = (value: string, name: keyof ISettingsCompanyResponse) => {
+const handleChangeInput = (value: string, name: keyof ISettingsInvoiceResponse) => {
   const expectedValue = Number(value) || value;
   Object.assign(state, { [name]: expectedValue });
 };
@@ -116,7 +111,7 @@ const resetForm = () => {
 <template>
   <div v-if="!loading" class="flex w-full flex-col gap-y-5">
     <Panel>
-      <template #header>{{ COMPANY_SETTINGS }}</template>
+      <template #header>{{ INVOICE_SETTINGS }}</template>
       <template #content>
         <div class="flex w-full flex-wrap gap-x-10 gap-y-4">
           <div v-for="(input, index) in inputs" :key="input.id" class="flex flex-auto sm:w-1/3">
@@ -126,7 +121,7 @@ const resetForm = () => {
               :mask="formating ? input.mask : ''"
               :type="input.type"
               :name="input.name"
-              :value="state[input.name as keyof ISettingsCompanyResponse]"
+              :value="state[input.name as keyof ISettingsInvoiceResponse]"
               :input-mode="formating ? input.inputMode : 'text'"
               :errors="checkErrors && input.validateRules ? v$[input.name].$errors : []"
               :validate-rules="input.validateRules"

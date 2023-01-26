@@ -19,13 +19,77 @@ export interface ISettingsCompanyResponse {
   siteAddress: string;
 }
 
+export interface ISettingsInvoiceResponse {
+  invoiceNumber: number;
+  invoiceYear: number;
+  placeOfIssue: string;
+}
+
 export interface ISettingsSiteResponse {
   accountantEmail: string;
-  lastInvoiceNumber: number;
-  lastInvoiceYear: number;
-  placeOfIssue: string;
+  mailHost: string;
+  mailPort: number;
+  mailUser: string;
+  mailPassword: string;
+}
+
+export interface SettingsPaymentAPI {
   accountNumber: string;
   bankName: string;
 }
 
+export type TItemStandard = "piece" | "meter";
 
+export interface IContractor {
+  selectedId: string;
+  name: string;
+  address: string;
+  zipcode: string;
+  city: string;
+  nip: string;
+  email: string;
+}
+
+export interface ICompany {
+  name: string;
+  address: string;
+  zipcode: string;
+  city: string;
+  nip: string;
+  email: string;
+  phoneNumber: string;
+  siteAddress: string;
+}
+
+export interface IInvoiceSettings {
+  invoiceNumber: number;
+  invoiceYear: number;
+  placeOfIssue: string;
+  dateOfIssue: string;
+}
+
+export interface IPaymentSettings {
+  paymentMethod: "transfer" | "cash";
+  accountNumber: string;
+  bankName: string;
+  daysOfPayment: number;
+  dateOfPayment: string;
+}
+
+export interface IItem {
+  name: string;
+  price: number;
+  quantity: number;
+  standard: TItemStandard;
+  totalPrice: number;
+}
+
+export interface IInvoicesResponse {
+  _id?: string;
+  contractor: IContractor;
+  company: ICompany;
+  invoiceSettings: IInvoiceSettings;
+  paymentSettings: IPaymentSettings;
+  items: IItem[];
+  totalItemsValue: number;
+}

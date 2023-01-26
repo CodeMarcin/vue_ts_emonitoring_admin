@@ -9,8 +9,8 @@ import TheSiteFooter from "@/components/complex/TheSiteFooter/TheSiteFooter.vue"
   <div class="flex h-full w-full flex-col">
     <TheSiteMenu class="sm:flex" />
     <TheSiteMenuMobiel class="sm:hidden" />
-    <TheBreadcrumbs class="mt-14 sm:mt-0" />
-    <router-view />
+    <!-- <TheBreadcrumbs class="mt-14 sm:mt-0" /> -->
+    <router-view class="mt-20 sm:mt-10"/>
 
     <TheSiteFooter class="mt-10"/>
   </div>

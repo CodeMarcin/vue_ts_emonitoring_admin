@@ -12,24 +12,23 @@ import Input from "@/components/parts/Input/Input.vue";
 import Button from "@/components/parts/Button/Button.vue";
 import Panel from "@/components/parts/Panel/Panel.vue";
 import Modal from "@/components/parts/Modal/Modal.vue";
-import LoaderInputs from "@/loaders/LoaderInputs.vue";
+import LoaderDefault from "@/loaders/LoaderDefault.vue";
 
 import { useValidateCreateRules } from "@/use/useValidateCreateRules";
 
-import { OBJECT__SETTINGS_SITE } from "@/data/objects/ObjectSettings";
+import { OBJECT__INPUT_SITE_SETTINGS } from "@/data/objects/ObjectInputs";
 
 import { CHECK_ERRORS, CONFIRM_QUESTION, SAVE, FORMATING, NO, RESET, YES, SITE_SETTINGS } from "@/data/labels/LabelsGlobal";
 
 const initialState: ISettingsSiteResponse = {
   accountantEmail: "",
-  accountNumber: "",
-  bankName: "",
-  lastInvoiceNumber: 0,
-  lastInvoiceYear: 0,
-  placeOfIssue: "",
+  mailHost: "",
+  mailPort: 0,
+  mailPassword: "",
+  mailUser: "",
 };
 
-const inputs = reactive(OBJECT__SETTINGS_SITE);
+const inputs = reactive(OBJECT__INPUT_SITE_SETTINGS);
 
 const loading = ref<boolean>(false);
 const saving = ref<boolean>(false);
@@ -97,7 +96,8 @@ const handleFormating = async (checked: boolean) => {
 };
 
 const handleChangeInput = (value: string | number, name: keyof ISettingsSiteResponse) => {
-  Object.assign(state, { [name]: value });
+  const expectedValue = Number(value) || value;
+  Object.assign(state, { [name]: expectedValue });
 };
 
 const toggleModal = () => {
@@ -175,5 +175,5 @@ const resetForm = () => {
     </template>
   </Modal>
 
-  <LoaderInputs v-if="loading" />
+  <LoaderDefault v-if="loading" />
 </template>
