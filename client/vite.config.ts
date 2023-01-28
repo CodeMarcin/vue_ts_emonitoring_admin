@@ -9,6 +9,8 @@ export default defineConfig({
   server: {
     host: true,
   },
+
+  base: process.env.NODE_ENV === "production" ? "/faktury/" : "/",
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),

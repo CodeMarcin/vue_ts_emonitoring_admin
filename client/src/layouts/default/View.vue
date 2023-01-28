@@ -3,6 +3,7 @@ import TheSiteMenu from "@/components/complex/TheSiteMenu/TheSiteMenu.vue";
 import TheSiteMenuMobiel from "@/components/complex/TheSiteMenuMobile/TheSiteMenuMobile.vue";
 import TheBreadcrumbs from "@/components/complex/TheBreadcrumbs/TheBreadcrumbs.vue";
 import TheSiteFooter from "@/components/complex/TheSiteFooter/TheSiteFooter.vue";
+import Toast from "@/components/parts/Toast/Toast.vue";
 </script>
 
 <template>
@@ -13,5 +14,6 @@ import TheSiteFooter from "@/components/complex/TheSiteFooter/TheSiteFooter.vue"
     <router-view class="mt-20 sm:mt-10"/>
 
     <TheSiteFooter class="mt-10"/>
+    <Toast />
   </div>
 </template>
