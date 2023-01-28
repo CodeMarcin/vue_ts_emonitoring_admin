@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive, onBeforeMount, toRef, watchEffect, computed } from "vue";
-import { jsPDF } from "jspdf";
-import html2canvas from "html2canvas";
+import { useToastStore } from "@/stores/ToastStore";
 
 import type { IInvoicesResponse, ISettingsSiteResponse, IItem } from "@/api/Types";
 
@@ -26,6 +25,7 @@ import {
   ACCOUNTAT,
   CONTRACTOR,
   NUMBER,
+INVOICE_DELETED,
 } from "@/data/labels/LabelsGlobal";
 import Button from "@/components/parts/Button/Button.vue";
 import Modal from "@/components/parts/Modal/Modal.vue";
@@ -94,6 +94,7 @@ const deleting = ref<boolean>(false);
 const clickedInvoiceId = ref<string>();
 const showPreview = ref<boolean>();
 const invoiceStateForRender = reactive<IInvoiceFinallState>({ ...initialState });
+const toastStore = useToastStore();
 
 const getAndSetInvoices = async (clear = false) => {
   try {
@@ -124,6 +125,8 @@ const deleteInvoice = async () => {
   try {
     deleting.value = true;
     await deleteDoc(doc(COLLECTION__INVOICES, clickedInvoiceId.value));
+    toastStore.setToast('success', INVOICE_DELETED)
+    toastStore.showToastAction();
     await getAndSetInvoices(true);
     toggleDeleteModal();
   } catch (error) {

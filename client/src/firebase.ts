@@ -14,10 +14,17 @@ const firebaseConfig = {
 export const appFire = initializeApp(firebaseConfig);
 export const FIREBASE_DB = getFirestore(appFire);
 
-export const COLLECTION__CONTRACTORS = collection(FIREBASE_DB, "contractors");
-export const COLLECTION__SETTINGS_COMPANY = collection(FIREBASE_DB, "settingsCompany");
-export const COLLECTION__SETTINGS_SITE = collection(FIREBASE_DB, "settingsSite");
-export const COLLECTION__SETTINGS_INVOICE = collection(FIREBASE_DB, "settingsInvoice");
-export const COLLECTION__SETTINGS_PAYMENT = collection(FIREBASE_DB, "settingsPayment");
-export const COLLECTION__INVOICES = collection(FIREBASE_DB, "invoices");
+export const COLLECTION__CONTRACTORS = collection(FIREBASE_DB, "DEV_contractors");
+export const COLLECTION__SETTINGS_COMPANY = collection(FIREBASE_DB, "DEV_settingsCompany");
+export const COLLECTION__SETTINGS_SITE = collection(FIREBASE_DB, "DEV_settingsSite");
+export const COLLECTION__SETTINGS_INVOICE = collection(FIREBASE_DB, "DEV_settingsInvoice");
+export const COLLECTION__SETTINGS_PAYMENT = collection(FIREBASE_DB, "DEV_settingsPayment");
+export const COLLECTION__INVOICES = collection(FIREBASE_DB, "DEV_invoices");
+
+// export const COLLECTION__CONTRACTORS = collection(FIREBASE_DB, "contractors");
+// export const COLLECTION__SETTINGS_COMPANY = collection(FIREBASE_DB, "settingsCompany");
+// export const COLLECTION__SETTINGS_SITE = collection(FIREBASE_DB, "settingsSite");
+// export const COLLECTION__SETTINGS_INVOICE = collection(FIREBASE_DB, "settingsInvoice");
+// export const COLLECTION__SETTINGS_PAYMENT = collection(FIREBASE_DB, "settingsPayment");
+// export const COLLECTION__INVOICES = collection(FIREBASE_DB, "invoices");
 

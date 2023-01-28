@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { computed, ref, onMounted, watchEffect } from "vue";
+import { computed, ref, watchEffect } from "vue";
+import { useToastStore } from "@/stores/ToastStore";
 import { useCreateItemValue } from "@/use/useCreateItemValue";
 import { useFirstLetterUppercase } from "@/use/useFirstLetterUppercase";
 import { usePriceToWords } from "@/use/usePriceToWords";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
+import axios from "axios";
 
 import {
   BUYER,
@@ -31,8 +33,8 @@ import {
   TOTAL,
   INVOICE_BOTTOM_TEXT,
   ADDRES_START,
+  MAILS_SEND,
 } from "@/data/labels/LabelsGlobal";
-import axios from "axios";
 export type TItemStandard = "piece" | "meter";
 
 export interface IContractor {
@@ -93,6 +95,7 @@ export interface IInvoiceFinallState {
 }
 
 const renderHook = ref();
+const toastStore = useToastStore();
 
 const emit = defineEmits(["renderEnd", "sendEnd"]);
 
@@ -146,14 +149,22 @@ const sendPdf = async () => {
     pdf.addImage(img, "PNG", 0, 0, pdfWidth, pdfHeight, "SLOW", "SLOW");
     const formData = new FormData();
     formData.append("file", pdf.output("blob"));
-    const sendFile = await axios.post("http://localhost:4500/sendFile", formData);
+
+    const sendFile = await axios.post(import.meta.env.VITE_API_SEND_FILE, formData);
     if (sendFile.data) {
-      const sendMail = await axios.post("http://localhost:4500/sendMail", props.mailData);
-      if (sendMail.data) console.log("wyslalem");
+      const sendMail = await axios.post(import.meta.env.VITE_API_SEND_MAIL, props.mailData);
+      if (sendMail.data) {
+        toastStore.setToast("success", MAILS_SEND, true, "ri-mail-send-line");
+        toastStore.showToastAction();
+      }
     }
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      console.error(error.response?.data);
+      toastStore.setToast("error", error.message, false);
+      toastStore.showToastAction();
+    } else {
+      toastStore.setToast("error", error as string, false);
+      toastStore.showToastAction();
     }
   } finally {
     emitSendEnd();

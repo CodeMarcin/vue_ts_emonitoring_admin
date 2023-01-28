@@ -2,7 +2,9 @@
 import { ref, reactive, onBeforeMount, watchEffect } from "vue";
 import { addDoc, doc, DocumentSnapshot, getDoc, getDocs, orderBy, query, QuerySnapshot, setDoc, type DocumentData } from "@firebase/firestore";
 import { useVuelidate } from "@vuelidate/core";
+import { useToastStore } from "@/stores/ToastStore";
 import { isEqual } from "lodash";
+import router from "@/router";
 
 import Select from "@/components/parts/Select/Select.vue";
 import Panel from "@/components/parts/Panel/Panel.vue";
@@ -34,9 +36,8 @@ import {
   COLLECTION__INVOICES,
 } from "@/firebase";
 
-import { ADD, CASH, CHECK_ERRORS, FORMATING, METER, PIECE, PREVIEW, TRANSFER, BACK, SAVE } from "@/data/labels/LabelsGlobal";
+import { ADD, CASH, CHECK_ERRORS, FORMATING, METER, PIECE, PREVIEW, TRANSFER, BACK, SAVE, INVOICE_ADD } from "@/data/labels/LabelsGlobal";
 import { useCreateItemValue } from "@/use/useCreateItemValue";
-import router from "@/router";
 
 export type TItemStandard = "piece" | "meter";
 
@@ -175,6 +176,7 @@ const checkErrors = ref<boolean>(true);
 const loading = ref<boolean>(false);
 const saving = ref<boolean>(false);
 const preview = ref<boolean>(false);
+const toastStore = useToastStore();
 
 const v$ = useVuelidate(rules, state);
 
@@ -243,9 +245,11 @@ const saveInvoice = async () => {
       await setDoc(doc(COLLECTION__SETTINGS_INVOICE, "settings"), { invoiceNumber: state.invoiceSettings.invoiceNumber + 1 }, { merge: true });
     }
     await addDoc(COLLECTION__INVOICES, { ...state, createDate: new Date() });
+    toastStore.setToast('success', INVOICE_ADD);
+    toastStore.showToastAction();
     router.push({ name: "InvoicesAll" });
   } catch (error) {
-    console.log(error);
+    console.error(error);
   } finally {
     saving.value = false;
   }

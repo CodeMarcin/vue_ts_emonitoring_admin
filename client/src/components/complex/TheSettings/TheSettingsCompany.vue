@@ -2,6 +2,7 @@
 import { reactive, ref, nextTick, onBeforeMount } from "vue";
 import { doc, getDoc, setDoc } from "@firebase/firestore";
 import { useVuelidate } from "@vuelidate/core";
+import { useToastStore } from "@/stores/ToastStore";
 
 import type { ISettingsCompanyResponse } from "@/api/Types";
 
@@ -18,7 +19,7 @@ import { useValidateCreateRules } from "@/use/useValidateCreateRules";
 
 import { OBJECT__INPUT_COMPANY } from "@/data/objects/ObjectInputs";
 
-import { CHECK_ERRORS, COMPANY_SETTINGS, CONFIRM_QUESTION, SAVE, FORMATING, NO, RESET, YES } from "@/data/labels/LabelsGlobal";
+import { CHECK_ERRORS, COMPANY_SETTINGS, CONFIRM_QUESTION, SAVE, FORMATING, NO, RESET, YES, SAVED } from "@/data/labels/LabelsGlobal";
 
 const initialState: ISettingsCompanyResponse = {
   address: "",
@@ -39,6 +40,7 @@ const showModal = ref<boolean>(false);
 const checkErrors = ref<boolean>(true);
 const formating = ref<boolean>(true);
 const forceSendValue = ref(false);
+const toastStore = useToastStore();
 
 const rules = useValidateCreateRules(inputs);
 const state = reactive<ISettingsCompanyResponse>({ ...initialState });
@@ -73,6 +75,8 @@ const saveData = async () => {
   try {
     saving.value = true;
     await setDoc(doc(COLLECTION__SETTINGS_COMPANY, "settings"), state);
+    toastStore.setToast("success", SAVED);
+    toastStore.showToastAction();
   } catch (error) {
     console.error(error);
   } finally {

@@ -2,6 +2,7 @@
 import { reactive, ref, nextTick, onBeforeMount } from "vue";
 import { doc, getDoc, setDoc } from "@firebase/firestore";
 import { useVuelidate } from "@vuelidate/core";
+import { useToastStore } from "@/stores/ToastStore";
 
 import type { ISettingsInvoiceResponse } from "@/api/Types";
 
@@ -18,7 +19,7 @@ import { useValidateCreateRules } from "@/use/useValidateCreateRules";
 
 import { OBJECT__INPUT_INVOICE_SETTINGS_FOR_EDIT } from "@/data/objects/ObjectInputs";
 
-import { CHECK_ERRORS, CONFIRM_QUESTION, SAVE, FORMATING, NO, RESET, YES, INVOICE_SETTINGS } from "@/data/labels/LabelsGlobal";
+import { CHECK_ERRORS, CONFIRM_QUESTION, SAVE, FORMATING, NO, RESET, YES, INVOICE_SETTINGS, SAVED } from "@/data/labels/LabelsGlobal";
 
 const initialState: ISettingsInvoiceResponse = {
   invoiceNumber: 0,
@@ -34,6 +35,7 @@ const showModal = ref<boolean>(false);
 const checkErrors = ref<boolean>(true);
 const formating = ref<boolean>(true);
 const forceSendValue = ref(false);
+const toastStore = useToastStore();
 
 const rules = useValidateCreateRules(inputs);
 const state = reactive<ISettingsInvoiceResponse>({ ...initialState });
@@ -68,6 +70,8 @@ const saveData = async () => {
   try {
     saving.value = true;
     await setDoc(doc(COLLECTION__SETTINGS_INVOICE, "settings"), state);
+    toastStore.setToast("success", SAVED);
+    toastStore.showToastAction();
   } catch (error) {
     console.error(error);
   } finally {

@@ -2,6 +2,7 @@
 import { ref, nextTick, reactive } from "vue";
 import { useVuelidate } from "@vuelidate/core";
 import { addDoc } from "@firebase/firestore";
+import { useToastStore } from "@/stores/ToastStore";
 import router from "@/router";
 
 import type { IContractorsResponse } from "@/api/Types";
@@ -19,7 +20,7 @@ import { useValidateCreateState } from "@/use/useValidateCreateState";
 
 import { OBJECT__FORM_CONTRACTOR_ADD } from "@/data/objects/ObjectsFormContractorAdd";
 
-import { CHECK_ERRORS, FORMATING, ADD, RESET, CONFIRM_QUESTION, YES, NO } from "@/data/labels/LabelsGlobal";
+import { CHECK_ERRORS, FORMATING, ADD, RESET, CONFIRM_QUESTION, YES, NO, CONTRACTOR_ADD } from "@/data/labels/LabelsGlobal";
 
 const inputs = reactive(OBJECT__FORM_CONTRACTOR_ADD);
 
@@ -28,6 +29,7 @@ const showModal = ref<boolean>(false);
 const checkErrors = ref<boolean>(true);
 const formating = ref<boolean>(true);
 const forceSendValue = ref(false);
+const toastStore = useToastStore();
 
 const rules = useValidateCreateRules(inputs);
 const state = useValidateCreateState(inputs) as IContractorsResponse;
@@ -53,6 +55,8 @@ const addContractor = async () => {
   try {
     loading.value = true;
     await addDoc(COLLECTION__CONTRACTORS, { ...state, createDate: new Date() });
+    toastStore.setToast('success', CONTRACTOR_ADD)
+    toastStore.showToastAction();
     router.push({ name: "ContractorsAll" });
   } catch (error) {
     console.error(error);
@@ -77,7 +81,6 @@ const handleFormating = async (checked: boolean) => {
 
 const handleChangeInput = (value: string, name: keyof IContractorsResponse) => {
   state[name] = value;
-  console.log(state);
 };
 
 const toggleModal = () => {

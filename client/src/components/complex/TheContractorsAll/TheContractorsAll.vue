@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { reactive, ref, onBeforeMount } from "vue";
 import { doc, getDocs, deleteDoc, query, orderBy, where, writeBatch } from "@firebase/firestore";
+import { useToastStore } from "@/stores/ToastStore";
+
 import type { IContractorsResponse } from "@/api/Types";
 
 import { COLLECTION__CONTRACTORS, COLLECTION__INVOICES, FIREBASE_DB } from "@/firebase";
@@ -10,13 +12,14 @@ import Modal from "@/components/parts/Modal/Modal.vue";
 import Checkbox from "@/components/parts/Checkbox/Checkbox.vue";
 import LoaderDefault from "@/loaders/LoaderDefault.vue";
 
-import { EDIT, DELETE, ADD_INVOICE, ADDRES_START, NIP, NO, YES, CONFIRM_DELETE, DELETE_RELATED_INVOICES } from "@/data/labels/LabelsGlobal";
+import { EDIT, DELETE, ADD_INVOICE, ADDRES_START, NIP, NO, YES, CONFIRM_DELETE, DELETE_RELATED_INVOICES, CONTRACTOR_DELETED } from "@/data/labels/LabelsGlobal";
 
 const contractors = reactive<IContractorsResponse[]>([]);
 const loading = ref<boolean>(false);
 const showModal = ref<boolean>(false);
 const deleteContractorId = ref<string>();
 const deleteContractorInvoices = ref<boolean>(true);
+const toastStore = useToastStore();
 
 const getAndSetContractors = async (clear = false) => {
   try {
@@ -39,11 +42,12 @@ const deleteContractor = async () => {
       const FIREBASE_BATCH = writeBatch(FIREBASE_DB);
       const invoicesToDelete = await getDocs(query(COLLECTION__INVOICES, where("contractor.selectedId", "==", deleteContractorId.value)));
       invoicesToDelete.forEach((el) => {
-
         FIREBASE_BATCH.delete(el.ref);
       });
       await FIREBASE_BATCH.commit();
     }
+    toastStore.setToast("success", CONTRACTOR_DELETED);
+    toastStore.showToastAction();
     await getAndSetContractors(true);
     toggleModal();
   } catch (error) {
