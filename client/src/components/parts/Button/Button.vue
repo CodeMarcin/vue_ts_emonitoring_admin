@@ -12,6 +12,7 @@ export interface Button {
   icon?: string;
   iconPosition?: "start" | "end";
   isLoading?: boolean;
+  hoverTooltipText?: string;
 }
 
 const props = withDefaults(defineProps<Button>(), {
@@ -20,6 +21,11 @@ const props = withDefaults(defineProps<Button>(), {
 });
 
 const showTooltip = ref(false);
+const showHoverTooltipText = ref(false);
+
+const toggleHoverTooltipText = () => {
+  if (props.hoverTooltipText) showHoverTooltipText.value = !showHoverTooltipText.value;
+};
 
 const buttonClass = computed(() => {
   let className: string;
@@ -51,17 +57,29 @@ const closeTooltip = () => {
 </script>
 
 <template>
-  <button v-if="props.type === 'basic'" :class="buttonClass" @click="handleClick">
+  <button v-if="props.type === 'basic'" :class="buttonClass" @click="handleClick" @mouseenter="toggleHoverTooltipText" @mouseleave="toggleHoverTooltipText">
     <Spinner v-if="props.isLoading" />
     <i v-if="props.icon && props.iconPosition === 'start' && !props.isLoading" :class="[props.icon, 'text-lg']"></i>
     <span v-if="!props.isLoading">{{ label }}</span>
-
     <i v-if="props.icon && props.iconPosition === 'end' && !props.isLoading" :class="[props.icon, 'text-lg ']"></i>
+
+    <div
+      v-show="showHoverTooltipText"
+      class="absolute -top-[150%] -left-[50%] z-10 inline-block min-w-max rounded-lg bg-gray-900 px-3 py-2 text-sm font-medium text-white shadow-sm"
+    >
+      {{ props.hoverTooltipText }}
+    </div>
   </button>
 
-  <button v-else-if="props.type === 'icon'" :class="buttonClass" @click="handleClick">
+  <button v-else-if="props.type === 'icon'" :class="buttonClass" @click="handleClick" @mouseenter="toggleHoverTooltipText" @mouseleave="toggleHoverTooltipText">
     <Spinner v-if="props.isLoading" />
     <i v-else :class="props.icon"></i>
+    <div
+      v-show="showHoverTooltipText"
+      class="absolute -top-[150%] -left-[50%] z-10 inline-block min-w-max rounded-lg bg-gray-900 px-3 py-2 text-sm font-medium text-white shadow-sm"
+    >
+      {{ props.hoverTooltipText }}
+    </div>
   </button>
 
   <div v-else-if="props.type === 'tooltip'" class="relative" v-click-away="closeTooltip">

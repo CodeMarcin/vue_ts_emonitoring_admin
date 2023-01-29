@@ -4,7 +4,7 @@ import { doc, getDoc, setDoc } from "@firebase/firestore";
 import { useVuelidate } from "@vuelidate/core";
 import { useToastStore } from "@/stores/ToastStore";
 
-import type { SettingsPaymentAPI } from "@/api/Types";
+import type { ISettingsPaymentAPI } from "@/api/Types";
 
 import { COLLECTION__SETTINGS_PAYMENT } from "@/firebase";
 
@@ -21,7 +21,7 @@ import { OBJECT__INPUT_PAYMENT_SETTINGS_FOR_EDIT } from "@/data/objects/ObjectIn
 
 import { CHECK_ERRORS, CONFIRM_QUESTION, SAVE, FORMATING, NO, RESET, YES, SITE_SETTINGS, PAYMENT_SETTINGS, SAVED } from "@/data/labels/LabelsGlobal";
 
-const initialState: SettingsPaymentAPI = {
+const initialState: ISettingsPaymentAPI = {
   accountNumber: "",
   bankName: "",
 };
@@ -37,7 +37,7 @@ const forceSendValue = ref(false);
 const toastStore = useToastStore();
 
 const rules = useValidateCreateRules(inputs);
-const state = reactive<SettingsPaymentAPI>({ ...initialState });
+const state = reactive<ISettingsPaymentAPI>({ ...initialState });
 const v$ = useVuelidate(rules, state);
 
 const checkForm = async () => {
@@ -96,7 +96,7 @@ const handleFormating = async (checked: boolean) => {
   forceSendValue.value = true;
 };
 
-const handleChangeInput = (value: string | number, name: keyof SettingsPaymentAPI) => {
+const handleChangeInput = (value: string | number, name: keyof ISettingsPaymentAPI) => {
 
   Object.assign(state, { [name]: value });
 };
@@ -124,7 +124,7 @@ const resetForm = () => {
               :mask="formating ? input.mask : ''"
               :type="input.type"
               :name="input.name"
-              :value="state[input.name as keyof SettingsPaymentAPI]"
+              :value="state[input.name as keyof ISettingsPaymentAPI]"
               :input-mode="formating ? input.inputMode : 'text'"
               :errors="checkErrors && input.validateRules ? v$[input.name].$errors : []"
               :validate-rules="input.validateRules"

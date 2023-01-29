@@ -4,6 +4,7 @@ import { addDoc, doc, DocumentSnapshot, getDoc, getDocs, orderBy, query, QuerySn
 import { useVuelidate } from "@vuelidate/core";
 import { useToastStore } from "@/stores/ToastStore";
 import { isEqual } from "lodash";
+import { useRoute } from "vue-router";
 import router from "@/router";
 
 import Select from "@/components/parts/Select/Select.vue";
@@ -15,6 +16,7 @@ import InvoicePreview from "@/components/complex/TheInvoicePreview/TheInvoicePre
 import LoaderDefault from "@/loaders/LoaderDefault.vue";
 
 import { useFormatDate } from "@/use/useFormatDate";
+import { useCreateItemValue } from "@/use/useCreateItemValue";
 
 import type { InterfaceInput } from "@/components/parts/Input/Input.vue";
 import type { SelectInterface } from "@/components/parts/Select/Select.vue";
@@ -36,8 +38,7 @@ import {
   COLLECTION__INVOICES,
 } from "@/firebase";
 
-import { ADD, CASH, CHECK_ERRORS, FORMATING, METER, PIECE, PREVIEW, TRANSFER, BACK, SAVE, INVOICE_ADD } from "@/data/labels/LabelsGlobal";
-import { useCreateItemValue } from "@/use/useCreateItemValue";
+import { ADD, CASH, CHECK_ERRORS, FORMATING, METER, PIECE, PREVIEW, TRANSFER, BACK, SAVE, INVOICE_ADD, SAVED } from "@/data/labels/LabelsGlobal";
 
 export type TItemStandard = "piece" | "meter";
 
@@ -147,6 +148,7 @@ const initialState: IInvoiceFinallState = {
   totalItemsValue: 1,
 };
 
+const invoiceIdFromURLParam = ref<string>();
 const state = reactive<IInvoiceFinallState>({ ...initialState });
 const rules = reactive<IRules>({ company: {}, contractor: {}, invoiceSettings: {}, items: [], paymentSettings: {} });
 const itemsInput = reactive(OBJECT__INPUT_ITEM);
@@ -241,11 +243,15 @@ const saveInvoice = async () => {
     const stateContractor: any = { ...state.contractor };
     delete stateContractor.selectedId;
     if (!isEqual(selectedContractor, stateContractor)) Object.assign(state, { contractor: { ...state.contractor, selectedId: "" } });
-    if (settingsInvoiceData.data()!.invoiceNumber === state.invoiceSettings.invoiceNumber) {
-      await setDoc(doc(COLLECTION__SETTINGS_INVOICE, "settings"), { invoiceNumber: state.invoiceSettings.invoiceNumber + 1 }, { merge: true });
+    if (!invoiceIdFromURLParam.value) {
+      if (settingsInvoiceData.data()!.invoiceNumber === state.invoiceSettings.invoiceNumber)
+        await setDoc(doc(COLLECTION__SETTINGS_INVOICE, "settings"), { invoiceNumber: state.invoiceSettings.invoiceNumber + 1 }, { merge: true });
+      await addDoc(COLLECTION__INVOICES, { ...state, createDate: new Date() });
+      toastStore.setToast("success", INVOICE_ADD);
+    } else {
+      await setDoc(doc(COLLECTION__INVOICES, invoiceIdFromURLParam.value), state);
+      toastStore.setToast("success", SAVED);
     }
-    await addDoc(COLLECTION__INVOICES, { ...state, createDate: new Date() });
-    toastStore.setToast('success', INVOICE_ADD);
     toastStore.showToastAction();
     router.push({ name: "InvoicesAll" });
   } catch (error) {
@@ -295,42 +301,74 @@ const createItemsRules = (obj: InterfaceInput[][]) => {
   return rules;
 };
 
-onBeforeMount(async () => {
-  const contractorsApiData = getDocs(query(COLLECTION__CONTRACTORS, orderBy("createDate", 'desc')));
-  const settingsCompanyApiData = getDoc(doc(COLLECTION__SETTINGS_COMPANY, "settings"));
-  const settingsInvoiceApiData = getDoc(doc(COLLECTION__SETTINGS_INVOICE, "settings"));
-  const settingsPaymentApiData = getDoc(doc(COLLECTION__SETTINGS_PAYMENT, "settings"));
-
+const _init = async () => {
   try {
     loading.value = true;
-    [contractorsData, settingsCompanyData, settingsInvoiceData, settingsPaymentData] = await Promise.all([
-      contractorsApiData,
-      settingsCompanyApiData,
-      settingsInvoiceApiData,
-      settingsPaymentApiData,
-    ]);
+    invoiceIdFromURLParam.value = useRoute().params.id as string;
+    contractorsData = await getDocs(query(COLLECTION__CONTRACTORS, orderBy("createDate", "desc")));
+    if (!invoiceIdFromURLParam.value) {
+      const settingsCompanyApiData = getDoc(doc(COLLECTION__SETTINGS_COMPANY, "settings"));
+      const settingsInvoiceApiData = getDoc(doc(COLLECTION__SETTINGS_INVOICE, "settings"));
+      const settingsPaymentApiData = getDoc(doc(COLLECTION__SETTINGS_PAYMENT, "settings"));
 
-    Object.assign(state, {
-      contractor: { selectedId: contractorsData.docs[0].id, ...contractorsData.docs[0].data() },
-      company: { ...settingsCompanyData.data() },
-      invoiceSettings: { ...state.invoiceSettings, ...settingsInvoiceData.data() },
-      paymentSettings: { ...state.paymentSettings, ...settingsPaymentData.data() },
-    });
+      [settingsCompanyData, settingsInvoiceData, settingsPaymentData] = await Promise.all([
+        settingsCompanyApiData,
+        settingsInvoiceApiData,
+        settingsPaymentApiData,
+      ]);
+
+      Object.assign(state, {
+        contractor: { selectedId: contractorsData.docs[0].id, ...contractorsData.docs[0].data() },
+        company: { ...settingsCompanyData.data() },
+        invoiceSettings: { ...state.invoiceSettings, ...settingsInvoiceData.data() },
+        paymentSettings: { ...state.paymentSettings, ...settingsPaymentData.data() },
+      });
+
+      Object.assign(rules, {
+        items: [...createItemsRules(OBJECT__INPUT_ITEM)],
+      });
+    } else {
+      const invoiceApiData = await getDoc(doc(COLLECTION__INVOICES, invoiceIdFromURLParam.value));
+      if (invoiceApiData.data()) {
+        const createTempItemArray = () => {
+          const tempItemsArr = [];
+          for (let i = 0; i < invoiceApiData.data()!.items.length; i++) tempItemsArr.push(OBJECT__INPUT_ITEM[0]);
+          return tempItemsArr;
+        };
+
+        Object.assign(state, {
+          contractor: { ...invoiceApiData.data()!.contractor },
+          company: { ...invoiceApiData.data()!.company },
+          invoiceSettings: { ...state.invoiceSettings, ...invoiceApiData.data()!.invoiceSettings },
+          paymentSettings: { ...state.paymentSettings, ...invoiceApiData.data()!.paymentSettings },
+          items: [...invoiceApiData.data()!.items],
+        });
+
+        Object.assign(rules, {
+          items: [...createItemsRules(createTempItemArray())],
+        });
+        Object.assign(itemsInput, createTempItemArray());
+        Object.assign(selectContractor, { selected: invoiceApiData.data()!.contractor.selectedId });
+        Object.assign(selectPaymentMethod, { selected: invoiceApiData.data()!.paymentSettings.paymentMethod });
+      }
+    }
+    contractorsData.forEach((el) => selectContractor.options!.push({ label: el.data().name, value: el.id }));
 
     Object.assign(rules, {
       contractor: createRules(OBJECT__INPUT_CONTRACTOR),
       company: createRules(OBJECT__INPUT_COMPANY),
       invoiceSettings: createRules(OBJECT__INPUT_INVOICE_SETTINGS),
       paymentSettings: createRules(OBJECT__INPUT_PAYMENT_SETTINGS),
-      items: [...createItemsRules(OBJECT__INPUT_ITEM)],
     });
-
-    contractorsData.forEach((el) => selectContractor.options!.push({ label: el.data().name, value: el.id }));
   } catch (error) {
     console.error(error);
   } finally {
     loading.value = false;
   }
+};
+
+onBeforeMount(() => {
+  _init();
 });
 
 watchEffect(() => {
@@ -520,7 +558,7 @@ watchEffect(() => {
 
   <LoaderDefault v-if="loading" />
 
-  <InvoicePreview v-if="preview" v-bind="state"  />
+  <InvoicePreview v-if="preview" v-bind="state" />
 
   <div class="mt-5 flex justify-between" v-if="preview">
     <Button :label="BACK" outline icon="ri-arrow-left-s-line" icon-position="start" type="basic" @handle-click="closePreview" />

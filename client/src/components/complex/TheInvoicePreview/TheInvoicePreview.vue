@@ -120,60 +120,48 @@ const isHidden = computed(() => {
 const props = withDefaults(defineProps<IInvoiceFinallState>(), {
   render: false,
   hidden: false,
+  sendMails: false,
+  mailData: false,
 });
 
-const createPDF = async () => {
+const pdfOpertaion = async (type: "save" | "send") => {
   try {
-    const pdf = new jsPDF("portrait", "pt", "a4");
     const data = await html2canvas(renderHook.value, { scale: 3 });
+    const pdf = new jsPDF("portrait", "pt", "a4");
     const img = data.toDataURL("image/png");
     const imgProperties = pdf.getImageProperties(img);
     const pdfWidth = pdf.internal.pageSize.getWidth();
     const pdfHeight = (imgProperties.height * pdfWidth) / imgProperties.width;
     pdf.addImage(img, "PNG", 0, 0, pdfWidth, pdfHeight, "SLOW", "SLOW");
-    pdf.save(`${INVOICE}_${props.invoiceSettings.invoiceNumber}_${props.invoiceSettings.invoiceYear}.pdf`);
-    emitRenderEnd();
-  } catch (error) {
-    console.error(error);
-  }
-};
-
-const sendPdf = async () => {
-  try {
-    const pdf = new jsPDF("portrait", "pt", "a4");
-    const data = await html2canvas(renderHook.value, { scale: 3 });
-    const img = data.toDataURL("image/png");
-    const imgProperties = pdf.getImageProperties(img);
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = (imgProperties.height * pdfWidth) / imgProperties.width;
-    pdf.addImage(img, "PNG", 0, 0, pdfWidth, pdfHeight, "SLOW", "SLOW");
-    const formData = new FormData();
-    formData.append("file", pdf.output("blob"));
-
-    const sendFile = await axios.post(import.meta.env.VITE_API_SEND_FILE, formData);
-    if (sendFile.data) {
-      const sendMail = await axios.post(import.meta.env.VITE_API_SEND_MAIL, props.mailData);
-      if (sendMail.data) {
-        toastStore.setToast("success", MAILS_SEND, true, "ri-mail-send-line");
-        toastStore.showToastAction();
+    if (type === "save") {
+      pdf.save(`${INVOICE}_${props.invoiceSettings.invoiceNumber}_${props.invoiceSettings.invoiceYear}.pdf`);
+      emitRenderEnd();
+    } else if (type === "send") {
+      const formData = new FormData();
+      formData.append("file", pdf.output("blob"));
+      const sendFile = await axios.post(import.meta.env.VITE_API_SEND_FILE, formData);
+      if (sendFile.data) {
+        const sendMail = await axios.post(import.meta.env.VITE_API_SEND_MAIL, props.mailData);
+        if (sendMail.data) {
+          toastStore.setToast("success", MAILS_SEND, true, "ri-mail-send-line");
+          toastStore.showToastAction();
+        }
       }
+      emitSendEnd();
     }
   } catch (error) {
     if (axios.isAxiosError(error)) {
       toastStore.setToast("error", error.message, false);
       toastStore.showToastAction();
     } else {
-      toastStore.setToast("error", error as string, false);
-      toastStore.showToastAction();
+      console.error(error);
     }
-  } finally {
-    emitSendEnd();
   }
 };
 
 watchEffect(() => {
-  if (props.render) createPDF();
-  if (props.sendMails) sendPdf();
+  if (props.render) pdfOpertaion("save");
+  if (props.sendMails) pdfOpertaion("send");
 });
 </script>
 <template>

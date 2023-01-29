@@ -73,7 +73,10 @@ export const INVOICE_ADD = "Faktura dodana";
 export const CONTRACTOR_ADD = "Kontrahent dodany";
 export const INVOICE_DELETED = "Faktura usunięta";
 export const CONTRACTOR_DELETED = "Kontrahent usunięty";
-export const SAVED = 'Zapisano';
+export const SAVED = "Zapisano";
+export const CHANGE_LIST = "Changelog";
+export const EDIT_CONTRACTOR = "Edytuj kontrahenta"
+export const EDIT_CONTRACTOR_INVOICES = "Edytować dane w fakturach klienta?"
 export const INVOICE_BOTTOM_TEXT =
   "SPRZEDAWCA ZWOLNIONY PODMIOTOWO Z PODATKU OD TOWARÓW I USŁUG [dostawa towarów lub świadczenie usług zwolnione na podstawie art 113 ust. 1 (albo ust. 9) ustawy z dnia 11 marca 2004 r. o podatku od towarów i usług ( Dz.U. z 2016 r. poz. 710 z późn. zm. )]";
 

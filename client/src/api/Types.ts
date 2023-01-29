@@ -1,5 +1,5 @@
 export interface IContractorsResponse {
-  _id: string;
+  id?: string;
   name: string;
   address: string;
   zipcode: string;
@@ -33,7 +33,7 @@ export interface ISettingsSiteResponse {
   mailPassword: string;
 }
 
-export interface SettingsPaymentAPI {
+export interface ISettingsPaymentAPI {
   accountNumber: string;
   bankName: string;
 }
@@ -85,7 +85,7 @@ export interface IItem {
 }
 
 export interface IInvoicesResponse {
-  _id?: string;
+  id?: string;
   contractor: IContractor;
   company: ICompany;
   invoiceSettings: IInvoiceSettings;

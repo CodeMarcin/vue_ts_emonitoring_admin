@@ -20,11 +20,3 @@ export const COLLECTION__SETTINGS_SITE = collection(FIREBASE_DB, "DEV_settingsSi
 export const COLLECTION__SETTINGS_INVOICE = collection(FIREBASE_DB, "DEV_settingsInvoice");
 export const COLLECTION__SETTINGS_PAYMENT = collection(FIREBASE_DB, "DEV_settingsPayment");
 export const COLLECTION__INVOICES = collection(FIREBASE_DB, "DEV_invoices");
-
-// export const COLLECTION__CONTRACTORS = collection(FIREBASE_DB, "contractors");
-// export const COLLECTION__SETTINGS_COMPANY = collection(FIREBASE_DB, "settingsCompany");
-// export const COLLECTION__SETTINGS_SITE = collection(FIREBASE_DB, "settingsSite");
-// export const COLLECTION__SETTINGS_INVOICE = collection(FIREBASE_DB, "settingsInvoice");
-// export const COLLECTION__SETTINGS_PAYMENT = collection(FIREBASE_DB, "settingsPayment");
-// export const COLLECTION__INVOICES = collection(FIREBASE_DB, "invoices");
-

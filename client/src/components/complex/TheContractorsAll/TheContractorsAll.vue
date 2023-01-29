@@ -13,6 +13,7 @@ import Checkbox from "@/components/parts/Checkbox/Checkbox.vue";
 import LoaderDefault from "@/loaders/LoaderDefault.vue";
 
 import { EDIT, DELETE, ADD_INVOICE, ADDRES_START, NIP, NO, YES, CONFIRM_DELETE, DELETE_RELATED_INVOICES, CONTRACTOR_DELETED } from "@/data/labels/LabelsGlobal";
+import router from "@/router";
 
 const contractors = reactive<IContractorsResponse[]>([]);
 const loading = ref<boolean>(false);
@@ -26,7 +27,7 @@ const getAndSetContractors = async (clear = false) => {
     loading.value = true;
     const contractorsApiData = await getDocs(query(COLLECTION__CONTRACTORS, orderBy("createDate", "desc")));
     if (clear) contractors.splice(0);
-    contractorsApiData.forEach((el) => contractors.push({ ...(el.data() as IContractorsResponse), _id: el.id }));
+    contractorsApiData.forEach((el) => contractors.push({ ...(el.data() as IContractorsResponse), id: el.id }));
   } catch (error) {
     console.error(error);
   } finally {
@@ -74,29 +75,26 @@ onBeforeMount(() => {
 
 <template>
   <div v-if="!loading" class="flex flex-col divide-y-2 border shadow-lg">
-    <div v-for="contractor in contractors" :key="contractor._id" class="flex flex-col gap-y-2 p-2 md:gap-y-0">
+    <div v-for="contractor in contractors" :key="contractor.id" class="flex flex-col gap-y-2 p-2 md:gap-y-0">
       <div class="flex w-full items-center justify-between">
         <div class="flex w-2/3 flex-col gap-y-2 text-sm font-semibold">{{ contractor.name }}</div>
         <div class="flex w-1/3 justify-end gap-x-4">
           <div class="flex md:hidden">
             <Button type="tooltip" outline color="error" icon="ri-more-2-fill">
               <template #tooltip>
-                <router-link to="" class="flex items-center gap-x-2 p-2">
+                <router-link :to="`/contractors/edit/${contractor.id}`" class="flex items-center gap-x-2 p-2">
                   <i class="ri-edit-2-line"></i> <span class="text-xs font-semibold">{{ EDIT }}</span>
                 </router-link>
-                <router-link to="" class="flex items-center gap-x-2 p-2">
-                  <i class="ri-file-add-line"></i> <span class="text-xs font-semibold">{{ ADD_INVOICE }}</span>
-                </router-link>
-                <div class="bg-error-700 flex items-center gap-x-2 p-2 text-white" @click="() => toggleModal(contractor._id)">
+
+                <div class="bg-error-700 flex items-center gap-x-2 p-2 text-white" @click="() => toggleModal(contractor.id)">
                   <i class="ri-delete-bin-line"></i> <span class="text-xs font-semibold">{{ DELETE }}</span>
                 </div>
               </template>
             </Button>
           </div>
           <div class="hidden md:flex md:gap-x-4">
-            <Button outline type="icon" icon="ri-edit-2-line" />
-            <Button outline type="icon" icon="ri-file-add-line" />
-            <Button type="icon" color="error" icon="ri-delete-bin-line" @handle-click="() => toggleModal(contractor._id)" />
+            <Button outline type="icon" icon="ri-edit-2-line" :hover-tooltip-text="EDIT" @handle-click="router.push(`/contractors/edit/${contractor.id}`)" />
+            <Button type="icon" color="error" icon="ri-delete-bin-line" :hover-tooltip-text="DELETE" @handle-click="() => toggleModal(contractor.id)" />
           </div>
         </div>
       </div>
@@ -122,7 +120,7 @@ onBeforeMount(() => {
       <div class="flex w-full flex-col gap-y-2">
         <div class="w-11/12">
           {{ CONFIRM_DELETE }}
-          <span class="font-extrabold">{{ contractors.find((el) => el._id === deleteContractorId)?.name }}</span>
+          <span class="font-extrabold">{{ contractors.find((el) => el.id === deleteContractorId)?.name }}</span>
           ?
         </div>
         <div class="flex w-full justify-between">

@@ -1,3 +1,0 @@
-import { BASIC, ADDITIONAL, NAME, ADDRESS, ZIP_CODE, CITY, EMAIL, NIP } from "./LabelsGlobal";
-
-export default { BASIC, ADDITIONAL, NAME, ADDRESS, ZIP_CODE, CITY, EMAIL, NIP };
