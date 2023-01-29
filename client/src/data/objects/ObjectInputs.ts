@@ -218,7 +218,7 @@ export const OBJECT__INPUT_SITE_SETTINGS = <InterfaceInput[]>[
     name: "mailPort",
     type: "number",
     mask: "###",
-    validateRules: { required: customValidationRequired(), minLength: customValidationMinLength(3, 0) },
+    validateRules: { minLength: customValidationMinLength(3, 0) },
   },
   {
     id: uuid.v4(),

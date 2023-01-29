@@ -32,12 +32,6 @@ export const OBJECT__SITE_MENU: Finally[] = [
     items: [
       {
         id: uuid.v4(),
-        label: LABELS.INFO,
-        icon: "ri-information-line",
-        path: "/contractors",
-      },
-      {
-        id: uuid.v4(),
         label: LABELS.ALL_CONTRACTORS,
         icon: "ri-user-line",
         path: "/contractors/all",
@@ -57,12 +51,6 @@ export const OBJECT__SITE_MENU: Finally[] = [
     items: [
       {
         id: uuid.v4(),
-        label: LABELS.INFO,
-        icon: "ri-information-line",
-        path: "/invoices/info",
-      },
-      {
-        id: uuid.v4(),
         label: LABELS.ALL_INVOICES,
         icon: "ri-file-copy-2-line",
         path: "/invoices/all",
@@ -75,31 +63,6 @@ export const OBJECT__SITE_MENU: Finally[] = [
       },
     ],
   },
-  // {
-  //   id: uuid.v4(),
-  //   label: LABELS.OFFERTS,
-  //   icon: "ri-slideshow-line",
-  //   items: [
-  //     {
-  //       id: uuid.v4(),
-  //       label: LABELS.INFO,
-  //       icon: "ri-information-line",
-  //       path: "/offerts/info",
-  //     },
-  //     {
-  //       id: uuid.v4(),
-  //       label: LABELS.ALL_OFFERTS,
-  //       icon: "ri-stack-line",
-  //       path: "/offerts/all",
-  //     },
-  //     {
-  //       id: uuid.v4(),
-  //       label: LABELS.ADD_OFFERT,
-  //       icon: "ri-file-add-line",
-  //       path: "/offerts/add",
-  //     },
-  //   ],
-  // },
   {
     id: uuid.v4(),
     label: LABELS.SETTINGS,

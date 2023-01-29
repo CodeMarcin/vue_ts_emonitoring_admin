@@ -36,7 +36,7 @@ const setServersStatus = async () => {
 onMounted(() => setServersStatus());
 </script>
 <template>
-  <div class="flex flex-wrap justify-center gap-10 sm:justify-between">
+  <div class="flex flex-wrap justify-center gap-10 sm:justify-center">
     <Card v-for="server in servers" :key="server.id" class="w-2/3 sm:flex-1">
       <template #header>
         <div class="flex w-full justify-center"><i :class="[server.icon, 'text-4xl']"></i></div>

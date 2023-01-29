@@ -25,7 +25,7 @@ import {
   ACCOUNTAT,
   CONTRACTOR,
   NUMBER,
-INVOICE_DELETED,
+  INVOICE_DELETED,
 } from "@/data/labels/LabelsGlobal";
 import Button from "@/components/parts/Button/Button.vue";
 import Modal from "@/components/parts/Modal/Modal.vue";
@@ -33,6 +33,7 @@ import TheInvoicePreview from "../TheInvoicePreview/TheInvoicePreview.vue";
 import type { IInvoiceFinallState } from "../TheInvoicePreview/TheInvoicePreview.vue";
 import { useFormatDate } from "@/use/useFormatDate";
 import Checkbox from "@/components/parts/Checkbox/Checkbox.vue";
+import router from "@/router";
 
 const defaultItemData: IItem = {
   name: "",
@@ -101,7 +102,7 @@ const getAndSetInvoices = async (clear = false) => {
     loading.value = true;
     const contractorsApiData = await getDocs(query(COLLECTION__INVOICES, orderBy("invoiceSettings.invoiceNumber", "desc")));
     if (clear) invoices.splice(0);
-    contractorsApiData.forEach((el) => invoices.push({ ...(el.data() as IInvoicesResponse), _id: el.id }));
+    contractorsApiData.forEach((el) => invoices.push({ ...(el.data() as IInvoicesResponse), id: el.id }));
   } catch (error) {
     console.error(error);
   } finally {
@@ -125,7 +126,7 @@ const deleteInvoice = async () => {
   try {
     deleting.value = true;
     await deleteDoc(doc(COLLECTION__INVOICES, clickedInvoiceId.value));
-    toastStore.setToast('success', INVOICE_DELETED)
+    toastStore.setToast("success", INVOICE_DELETED);
     toastStore.showToastAction();
     await getAndSetInvoices(true);
     toggleDeleteModal();
@@ -136,9 +137,9 @@ const deleteInvoice = async () => {
   }
 };
 
-const handleDownloadInvoice = (_id: string) => {
+const handleDownloadInvoice = (id: string) => {
   download.value = true;
-  Object.assign(invoiceStateForRender, { ...invoices.find((el) => el._id === _id) });
+  Object.assign(invoiceStateForRender, { ...invoices.find((el) => el.id === id) });
   renderHook.value = true;
 };
 
@@ -153,13 +154,13 @@ const toggleDeleteModal = (id?: string) => {
 };
 
 const togglePreview = (id?: string) => {
-  if (id) Object.assign(invoiceStateForRender, { ...invoices.find((el) => el._id === id) });
+  if (id) Object.assign(invoiceStateForRender, { ...invoices.find((el) => el.id === id) });
   window.scrollTo({ top: 0, behavior: "smooth" });
   showPreview.value = !showPreview.value;
 };
 
-const handleShowSendMailsModal = (_id: string) => {
-  Object.assign(invoiceStateForRender, { ...invoices.find((el) => el._id === _id) });
+const handleShowSendMailsModal = (id: string) => {
+  Object.assign(invoiceStateForRender, { ...invoices.find((el) => el.id === id) });
   Object.assign(deliveryMails, { accountat: true, contractor: invoiceStateForRender.contractor.email ? true : false });
   mailsToSendArray.splice(0);
   mailsToSendArray.push(siteSettings.accountantEmail);
@@ -193,7 +194,7 @@ const handleSendMail = () => {
     mailMails: [...mailsToSendArray],
   };
   Object.assign(mailDataFinally, finalData);
-   sendMails.value = true;
+  sendMails.value = true;
 };
 
 const closeSendMail = () => {
@@ -209,7 +210,7 @@ onBeforeMount(() => {
 
 <template>
   <div v-if="!loading && !showPreview" class="flex flex-col divide-y-2 border shadow-lg">
-    <div v-for="invoice in invoices" :key="invoice._id" class="flex flex-col gap-y-2 p-2 md:gap-y-2">
+    <div v-for="invoice in invoices" :key="invoice.id" class="flex flex-col gap-y-2 p-2 md:gap-y-2">
       <div class="flex w-full items-center justify-between">
         <div class="flex w-2/3 flex-col gap-y-2 text-sm font-semibold">
           {{ INVOICE }} numer {{ invoice.invoiceSettings.invoiceNumber }}/{{ invoice.invoiceSettings.invoiceYear }}
@@ -218,34 +219,34 @@ onBeforeMount(() => {
           <div class="flex md:hidden">
             <Button type="tooltip" outline color="error" icon="ri-more-2-fill">
               <template #tooltip>
-                <router-link to="" class="flex items-center gap-x-2 p-2">
+                <router-link :to="`/invoices/edit/${invoice.id}`" class="flex items-center gap-x-2 p-2">
                   <i class="ri-edit-2-line"></i> <span class="text-xs font-semibold">{{ EDIT }}</span>
                 </router-link>
 
-                <div class="flex items-center gap-x-2 p-2" @click="() => handleShowSendMailsModal(invoice._id!)">
+                <div class="flex items-center gap-x-2 p-2" @click="() => handleShowSendMailsModal(invoice.id!)">
                   <i class="ri-mail-send-line"></i> <span class="text-xs font-semibold">{{ SEND }}</span>
                 </div>
 
-                <div class="flex items-center gap-x-2 p-2" @click="() => handleDownloadInvoice(invoice._id!)">
+                <div class="flex items-center gap-x-2 p-2" @click="() => handleDownloadInvoice(invoice.id!)">
                   <i class="ri-file-download-line"></i> <span class="text-xs font-semibold">{{ DOWNLOAD }}</span>
                 </div>
 
-                <div class="flex items-center gap-x-2 p-2" @click="() => togglePreview(invoice._id!)">
+                <div class="flex items-center gap-x-2 p-2" @click="() => togglePreview(invoice.id!)">
                   <i class="ri-profile-line"></i> <span class="text-xs font-semibold">{{ PREVIEW }}</span>
                 </div>
 
-                <div class="bg-error-700 flex items-center gap-x-2 p-2 text-white" @click="() => toggleDeleteModal(invoice._id)">
+                <div class="bg-error-700 flex items-center gap-x-2 p-2 text-white" @click="() => toggleDeleteModal(invoice.id)">
                   <i class="ri-delete-bin-line"></i> <span class="text-xs font-semibold">{{ DELETE }}</span>
                 </div>
               </template>
             </Button>
           </div>
           <div class="hidden md:flex md:gap-x-4">
-            <Button outline type="icon" icon="ri-edit-2-line" />
-            <Button outline type="icon" icon="ri-mail-send-line" @handle-click="() => handleShowSendMailsModal(invoice._id!)" />
-            <Button outline type="icon" icon="ri-file-download-line" @handle-click="() => handleDownloadInvoice(invoice._id!)" />
-            <Button outline type="icon" icon="ri-profile-line" @handle-click="() => togglePreview(invoice._id)" />
-            <Button type="icon" color="error" icon="ri-delete-bin-line" @handle-click="() => toggleDeleteModal(invoice._id)" />
+            <Button outline type="icon" icon="ri-edit-2-line" :hover-tooltip-text="EDIT" @handle-click="router.push(`/invoices/edit/${invoice.id}`)" />
+            <Button outline type="icon" icon="ri-mail-send-line" :hover-tooltip-text="SEND" @handle-click="() => handleShowSendMailsModal(invoice.id!)" />
+            <Button outline type="icon" icon="ri-file-download-line" :hover-tooltip-text="DOWNLOAD" @handle-click="() => handleDownloadInvoice(invoice.id!)" />
+            <Button outline type="icon" icon="ri-profile-line" :hover-tooltip-text="PREVIEW" @handle-click="() => togglePreview(invoice.id)" />
+            <Button type="icon" color="error" icon="ri-delete-bin-line" :hover-tooltip-text="DELETE" @handle-click="() => toggleDeleteModal(invoice.id)" />
           </div>
         </div>
       </div>
@@ -283,8 +284,8 @@ onBeforeMount(() => {
         <div class="w-11/12">
           {{ CONFIRM_DELETE }}
           <span class="font-extrabold"
-            >{{ INVOICE }} {{ invoices.find((el) => el._id === clickedInvoiceId)?.invoiceSettings.invoiceNumber }}/{{
-              invoices.find((el) => el._id === clickedInvoiceId)?.invoiceSettings.invoiceYear
+            >{{ INVOICE }} {{ invoices.find((el) => el.id === clickedInvoiceId)?.invoiceSettings.invoiceNumber }}/{{
+              invoices.find((el) => el.id === clickedInvoiceId)?.invoiceSettings.invoiceYear
             }}</span
           >?
         </div>

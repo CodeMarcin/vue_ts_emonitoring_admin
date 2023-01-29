@@ -1,10 +1,8 @@
-import { createRouter, createWebHistory } from "vue-router";
-
-import LABELS from "@/data/labels/LabelsTheSiteMenu";
+import { createRouter, createWebHashHistory } from "vue-router";
 import { getAuth, onAuthStateChanged } from "@firebase/auth";
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHashHistory("/faktury/"),
   routes: [
     {
       path: "/login",
@@ -48,28 +46,24 @@ const router = createRouter({
     {
       path: "/contractors",
       name: "contractors",
-      props: { label: LABELS.CONTRACTORS },
       meta: {
         requiresAuth: true,
       },
       component: () => import("@/layouts/default/View.vue"),
       children: [
         {
-          path: "",
-          name: "ContractorsInfo",
-          props: { label: LABELS.CONTRACTORS },
-          component: () => import(/* webpackChunkName: "contractorsinfo" */ "@/views/ContratorsInfo.vue"),
-        },
-        {
           path: "all",
           name: "ContractorsAll",
-          props: { label: LABELS.ALL_CONTRACTORS },
           component: () => import(/* webpackChunkName: "contractorsall" */ "@/views/ContractorsAll.vue"),
+        },
+        {
+          path: "edit/:id",
+          name: "ContractorEdit",
+          component: () => import(/* webpackChunkName: "contractorsall" */ "@/views/ContractorAdd.vue"),
         },
         {
           path: "add",
           name: "ContractorAdd",
-          props: { label: LABELS.ADD_CONTRACTOR },
           component: () => import(/* webpackChunkName: "contractoradd" */ "@/views/ContractorAdd.vue"),
         },
       ],
@@ -77,7 +71,6 @@ const router = createRouter({
     {
       path: "/invoices",
       name: "invoices",
-      props: { label: LABELS.INVOICES },
       meta: {
         requiresAuth: true,
       },
@@ -86,13 +79,16 @@ const router = createRouter({
         {
           path: "add",
           name: "InvoiceAdd",
-          props: { label: LABELS.ADD_INVOICE },
+          component: () => import(/* webpackChunkName: "invoiceadd" */ "@/views/InvoiceAdd.vue"),
+        },
+        {
+          path: "edit/:id",
+          name: "InvoiceEdit",
           component: () => import(/* webpackChunkName: "invoiceadd" */ "@/views/InvoiceAdd.vue"),
         },
         {
           path: "all",
           name: "InvoicesAll",
-          props: { label: LABELS.ALL_INVOICES },
           component: () => import(/* webpackChunkName: "invoicesall" */ "@/views/InvoicesAll.vue"),
         },
       ],
@@ -100,7 +96,6 @@ const router = createRouter({
     {
       path: "/settings",
       name: "settings",
-      props: { label: LABELS.SETTINGS },
       meta: {
         requiresAuth: true,
       },
@@ -109,25 +104,21 @@ const router = createRouter({
         {
           path: "invoice",
           name: "invoiceSettings",
-          props: { label: LABELS.INVOICE_SETTINGS },
           component: () => import(/* webpackChunkName: "invoicesettings" */ "@/views/SettingsInvoice.vue"),
         },
         {
           path: "company",
           name: "companySettings",
-          props: { label: LABELS.COMPANY_SETTINGS },
           component: () => import(/* webpackChunkName: "companysettings" */ "@/views/SettingsCompany.vue"),
         },
         {
           path: "payment",
           name: "paymmentSettings",
-          props: { label: LABELS.PAYMENT_SETTINGS },
           component: () => import(/* webpackChunkName: "paymentsettings" */ "@/views/SettingsPayment.vue"),
         },
         {
           path: "site",
           name: "siteSettings",
-          props: { label: LABELS.SITE_SETTINGS },
           component: () => import(/* webpackChunkName: "sitesettings" */ "@/views/SettingsSite.vue"),
         },
       ],

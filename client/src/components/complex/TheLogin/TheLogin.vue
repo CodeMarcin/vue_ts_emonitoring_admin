@@ -1,23 +1,35 @@
 <script setup lang="ts">
 import { reactive, ref } from "vue";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import Panel from "@/components/parts/Panel/Panel.vue";
-import { OBJECT__LOGIN } from "@/data/objects/ObjectLogin";
+import router from "@/router";
 
-import { useValidateCreateRules } from "@/use/useValidateCreateRules";
-import { useValidateCreateState } from "@/use/useValidateCreateState";
-import useVuelidate from "@vuelidate/core";
+import Panel from "@/components/parts/Panel/Panel.vue";
 import Input, { type InterfaceInput } from "@/components/parts/Input/Input.vue";
 import Button from "@/components/parts/Button/Button.vue";
+
+import useVuelidate from "@vuelidate/core";
+import { useValidateCreateRules } from "@/use/useValidateCreateRules";
+
+import { OBJECT__LOGIN } from "@/data/objects/ObjectLogin";
+
 import { LOGIN } from "@/data/labels/LabelsGlobal";
-import router from "@/router";
+
+export interface ILoginPanel {
+  login: string;
+  password: string;
+}
+
+const initialState: ILoginPanel = {
+  login: "",
+  password: "",
+};
 
 const inputs = reactive(OBJECT__LOGIN);
 const rules = useValidateCreateRules(inputs);
-const state = useValidateCreateState(inputs);
+const state = reactive(initialState);
 const error = ref(false);
 
-const handleChangeInput = (value: string, name: string) => {
+const handleChangeInput = (value: string, name: keyof ILoginPanel) => {
   if (error) error.value = false;
   state[name] = value;
 };
