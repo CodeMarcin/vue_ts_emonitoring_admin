@@ -6,4 +6,4 @@ Login: test@test.pl
 Password: test123
 
 ### WARNING
-o send an email, the SMTP server must be set correctly by entering  - Ustawienia -> Ustawienia strony
+To send an email, the SMTP server must be set correctly by entering  - Ustawienia -> Ustawienia strony
